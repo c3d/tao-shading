@@ -5,6 +5,7 @@ cel ->
     cel_color 0.7, 0.7, 1.0
     cel_shading
     rotatex 25
+    rotatey 10 * page_time
     object 0, 0, 0, 400, 400, 400, "Dog.obj"
 
 cel
