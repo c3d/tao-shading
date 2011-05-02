@@ -22,6 +22,8 @@ cel_color(r:real, b:real, g:real);
  *  Apply cell shading on current scene.
  *  It change current color (or texture) in a toon one define by @ref cel_color.
  *  @see <a href="http://en.wikipedia.org/wiki/Cel-shaded_animation">Wikipedia</a>
+ *
+ *  @note This effect support only light zero.
  */
 cel_shading();
 
@@ -67,6 +69,8 @@ surface_color(r:real, b:real, g:real);
  *  colors defined by @ref warm_color, @ref cool_color and @ref surface_color
  *  according to the corresponding coefficients.
  *  @see <a href="http://marctenbosch.com/npr_shading/">Non-photorealistic Shading</a>
+ *
+ *  @note This effect support only light zero.
  */
 gooch_shading();
 
