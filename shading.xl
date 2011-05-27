@@ -1,4 +1,4 @@
-// Shading module definition
+﻿// Shading module definition
 //
 // This exemple module allows to apply some shading effects
 //
@@ -8,9 +8,14 @@ module_description
     id "c09af2a2-448a-4844-85f3-ab06073f29b4"
     name "Shading"
     import_name "Shading"
-    description "A primitive that allows to add some shading effects to a scene"
-    version 1.0
+    description "A module that allows to add some shading effects to a scene"
+    author "Taodyne SAS"
+    website "http://www.taodyne.com"
+    version "1.0"
 
+module_description "fr",
+    name "Ombrage"
+    description "Permet d'ajouter des effets d'ombrages non-photoréalistes à une scène."
 
 // -------------------------------------------------------------------------------------------------------------------
 //   Cel shading (or Toon shading)
