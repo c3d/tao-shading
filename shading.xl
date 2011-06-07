@@ -15,7 +15,7 @@ module_description
 
 module_description "fr",
     name "Ombrage"
-    description "Permet d'ajouter des effets d'ombrages non-photoréalistes à une scène."
+    description "Permet d'ajouter des effets d'ombrages non-photoréalistes �  une scène."
 
 // -------------------------------------------------------------------------------------------------------------------
 //   Cel shading (or Toon shading)
