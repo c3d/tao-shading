@@ -1,4 +1,4 @@
-// Shading module definition
+﻿// Shading module definition
 //
 // This exemple module allows to apply some shading effects
 //
@@ -15,7 +15,7 @@ module_description
 
 module_description "fr",
     name "Ombrage"
-    description "Permet d'ajouter des effets d'ombrages non-photoréalistes �  une scène."
+    description "Permet d'ajouter des effets d'ombrages non-photoréalistes dans une scène."
 
 // -------------------------------------------------------------------------------------------------------------------
 //   Cel shading (or Toon shading)
