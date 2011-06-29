@@ -1,6 +1,6 @@
 ﻿// Shading module definition
 //
-// This exemple module allows to apply some shading effects
+// This module allows to apply some shading effects
 //
 // Copyright 2010-2011 Taodyne
 
@@ -167,6 +167,7 @@ gooch_shading ->
         vertex_shader <<
                      uniform float diffuse_warm;
                      uniform float diffuse_cool;
+
                      uniform vec3 warm_color;
                      uniform vec3 cool_color;
                      uniform vec3 surface_color;
@@ -209,8 +210,8 @@ gooch_shading ->
                          gl_FragColor = vec4(color, 1.0);
                      }
                      >>
-    shader_set diffuse_warm := DIFFUSE_WARM;
-    shader_set diffuse_cool := DIFFUSE_COOL;
-    shader_set warm_color := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)
-    shader_set cool_color := (COOL_COLOR_R; COOL_COLOR_G; COOL_COLOR_B)
+    shader_set diffuse_warm  := DIFFUSE_WARM;
+    shader_set diffuse_cool  := DIFFUSE_COOL;
+    shader_set warm_color    := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)
+    shader_set cool_color    := (COOL_COLOR_R; COOL_COLOR_G; COOL_COLOR_B)
     shader_set surface_color := (SURFACE_COLOR_R; SURFACE_COLOR_G; SURFACE_COLOR_B)
