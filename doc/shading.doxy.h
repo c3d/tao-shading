@@ -46,13 +46,17 @@ cool_diffuse(c:real);
 
 /**
  * Define warm color by its r, g, b values.
- * This color is used in @ref gooch_shading .
+ * This color is used in @ref gooch_shading.
+ *
+ * @note Warm color indicates surfaces facing toward the light source.
  */
 warm_color(r:real, b:real, g:real);
 
 /**
  * Define cool color by its r, g, b values.
  * This color is used in @ref gooch_shading.
+ *
+ * @note Cool color indicates surfaces that are angled away from the light source.
  */
 cool_color(r:real, b:real, g:real);
 
@@ -62,7 +66,6 @@ cool_color(r:real, b:real, g:real);
  */
 surface_color(r:real, b:real, g:real);
 
-
 /**
  *  Apply gooch shading on current scene.
  *  It change current color (or texture) in a toon one, which is obtained in mixing
@@ -71,6 +74,16 @@ surface_color(r:real, b:real, g:real);
  *  @see <a href="http://marctenbosch.com/npr_shading/">Non-photorealistic Shading</a>
  *
  *  @note This effect support only light zero.
+ *
+ * An example of use of Gooch Shading is described below
+ @code
+    cool_color 0.0, 0.0, 0.2
+    cool_diffuse 0.045
+    warm_color 0.2, 0.2, 0.0
+    warm_diffuse 0.45
+    surface_color 0.8, 0.1, 0.3
+    gooch_shading
+ @endcode
  */
 gooch_shading();
 

@@ -43,45 +43,46 @@ cel_shading->
     * It change current color in a toon one define by cell_color.
     **/
     shader_program
+        shader_log
         vertex_shader <<
-                     uniform vec3 cel_color;
+            uniform vec3 cel_color;
 
-                     varying vec3 color;
-                     void main()
-                     {
-                         gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+            varying vec3 color;
+            void main()
+            {
+                gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
-                         vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-                         vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
-                         vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
-                         vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
+                vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
+                vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+                vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
+                vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
-                         //Diffuse intensity
-                         float diff = max(dot(normal,lightDir), 0.0);
+                //Diffuse intensity
+                float diff = max(dot(normal,lightDir), 0.0);
 
-                         //Specular intensity
-                         float spec = 0.0;
-                         if (diff > 0.0)
-                            spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                //Specular intensity
+                float spec = 0.0;
+                if (diff > 0.0)
+                   spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
 
-                         diff =  diff * 0.6 + spec * 0.4;
+                diff =  diff * 0.6 + spec * 0.4;
 
-                         //Compute final color
-                         if(diff < 0.2)
-                            color = cel_color * 0.5;
-                         else if(diff < 0.5)
-                            color = cel_color * 0.75;
-                         else
-                            color = cel_color;
-                     }
-                     >>
+                //Compute final color
+                if(diff < 0.2)
+                   color = cel_color * 0.5;
+                else if(diff < 0.5)
+                   color = cel_color * 0.75;
+                else
+                   color = cel_color;
+            }
+            >>
         fragment_shader <<
-                     varying vec3 color;
-                     void main()
-                     {
-                         gl_FragColor = vec4(color, 1.0);
-                     }
-                     >>
+            varying vec3 color;
+            void main()
+            {
+                gl_FragColor = vec4(color, 1.0);
+            }
+            >>
 
     shader_set cel_color := (CELL_COLOR_R; CELL_COLOR_G; CELL_COLOR_B)
 
@@ -164,52 +165,53 @@ gooch_shading ->
     * Mixing coefficients are defined by diffuse_warm and diffuse_cool.
     **/
     shader_program
+        shader_log
         vertex_shader <<
-                     uniform float diffuse_warm;
-                     uniform float diffuse_cool;
+           uniform float diffuse_warm;
+           uniform float diffuse_cool;
 
-                     uniform vec3 warm_color;
-                     uniform vec3 cool_color;
-                     uniform vec3 surface_color;
+           uniform vec3 warm_color;
+           uniform vec3 cool_color;
+           uniform vec3 surface_color;
 
-                     varying vec3 color;
+           varying vec3 color;
 
-                     void main()
-                     {
-                        gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+           void main()
+           {
+              gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
-                        vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-                        vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
-                        vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
-                        vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
+              vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
+              vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+              vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
+              vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
-                        //Diffuse intensity
-                        float diff = max(dot(normal,lightDir), 0.0);
+              //Diffuse intensity
+              float diff = max(dot(normal,lightDir), 0.0);
 
-                        //Specular intensity
-                        float spec = 0.0;
-                        if (diff > 0.0)
-                        {
-                           spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
-                           spec = pow(spec, 32.0);
-                         }
+              //Specular intensity
+              float spec = 0.0;
+              if (diff > 0.0)
+              {
+                 spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                 spec = pow(spec, 32.0);
+              }
 
-                        //Mix colors
-                        vec3 kcool  = min(cool_color + diffuse_cool * surface_color, 1.0);
-                        vec3 kwarm  = min(warm_color + diffuse_warm * surface_color, 1.0);
-                        vec3 kfinal = mix(kcool, kwarm, diff);
+              //Mix colors
+              vec3 kcool  = min(cool_color + diffuse_cool * surface_color, 1.0);
+              vec3 kwarm  = min(warm_color + diffuse_warm * surface_color, 1.0);
+              vec3 kfinal = mix(kcool, kwarm, diff);
 
-                        //Compute final color
-                        color = min(kfinal + spec, 1.0);
-                     }
-                     >>
+              //Compute final color
+              color = min(kfinal + spec, 1.0);
+           }
+           >>
         fragment_shader <<
-                     varying vec3 color;
-                     void main()
-                     {
-                         gl_FragColor = vec4(color, 1.0);
-                     }
-                     >>
+           varying vec3 color;
+           void main()
+           {
+               gl_FragColor = vec4(color, 1.0);
+           }
+           >>
     shader_set diffuse_warm  := DIFFUSE_WARM;
     shader_set diffuse_cool  := DIFFUSE_COOL;
     shader_set warm_color    := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)
