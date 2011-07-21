@@ -76,15 +76,15 @@ surface_color(r:real, b:real, g:real);
  *  @note This effect support only light zero.
  *
  * An example of use of Gooch Shading is described below
-@code
-cool_color 0.0, 0.0, 0.2
-cool_diffuse 0.045
-warm_color 0.2, 0.2, 0.0
-warm_diffuse 0.45
-surface_color 0.8, 0.1, 0.3
-gooch_shading
-torus 0, 0, 0, 500, 500, 500, 50, 50, 0.25
-@endcode
+ @code
+ cool_color 0.0, 0.0, 0.2
+ cool_diffuse 0.045
+ warm_color 0.2, 0.2, 0.0
+ warm_diffuse 0.45
+ surface_color 0.8, 0.1, 0.3
+ gooch_shading
+ torus 0, 0, 0, 500, 500, 500, 50, 50, 0.25
+ @endcode
  */
 gooch_shading();
 
