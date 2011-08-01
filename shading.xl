@@ -46,15 +46,16 @@ cel_shading->
         shader_log
         vertex_shader <<
             uniform vec3 cel_color;
-
+            uniform int  LightId;
             varying vec3 color;
             void main()
             {
-                gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+                gl_Position = ftransform();
 
                 vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
                 vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
-                vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
+
+                vec3 lightDir       = normalize(gl_LightSource[LightId].position.xyz - eyeCoordinates);
                 vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
                 //Diffuse intensity
@@ -83,7 +84,7 @@ cel_shading->
                 gl_FragColor = vec4(color, 1.0);
             }
             >>
-
+    shader_set LightId   := 0
     shader_set cel_color := (CELL_COLOR_R; CELL_COLOR_G; CELL_COLOR_B)
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -174,15 +175,17 @@ gooch_shading ->
            uniform vec3 cool_color;
            uniform vec3 surface_color;
 
+           uniform int  LightId;
+
            varying vec3 color;
 
            void main()
            {
-              gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+              gl_Position = ftransform();
 
               vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
               vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
-              vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
+              vec3 lightDir       = normalize(gl_LightSource[LightId].position.xyz - eyeCoordinates);
               vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
               //Diffuse intensity
@@ -212,6 +215,7 @@ gooch_shading ->
                gl_FragColor = vec4(color, 1.0);
            }
            >>
+    shader_set LightId       := 0
     shader_set diffuse_warm  := DIFFUSE_WARM;
     shader_set diffuse_cool  := DIFFUSE_COOL;
     shader_set warm_color    := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)
