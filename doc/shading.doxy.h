@@ -23,7 +23,7 @@ cel_color(r:real, b:real, g:real);
  *  It change current color (or texture) in a toon one define by @ref cel_color.
  *  @see <a href="http://en.wikipedia.org/wiki/Cel-shaded_animation">Wikipedia</a>
  *
- *  @note This effect support only light zero.
+ *  @note This effect can support a maximum of 8 differents lights.
  */
 cel_shading();
 
@@ -73,18 +73,18 @@ surface_color(r:real, b:real, g:real);
  *  according to the corresponding coefficients.
  *  @see <a href="http://marctenbosch.com/npr_shading/">Non-photorealistic Shading</a>
  *
- *  @note This effect support only light zero.
+ *  @note This effect can support a maximum of 8 differents lights.
  *
  * An example of use of Gooch Shading is described below
- @code
- cool_color 0.0, 0.0, 0.2
- cool_diffuse 0.045
- warm_color 0.2, 0.2, 0.0
- warm_diffuse 0.45
- surface_color 0.8, 0.1, 0.3
- gooch_shading
- torus 0, 0, 0, 500, 500, 500, 50, 50, 0.25
- @endcode
+@code
+cool_color 0.0, 0.0, 0.2
+cool_diffuse 0.045
+warm_color 0.2, 0.2, 0.0
+warm_diffuse 0.45
+surface_color 0.8, 0.1, 0.3
+gooch_shading
+torus 0, 0, 0, 500, 500, 500, 50, 50, 0.25
+@endcode
  */
 gooch_shading();
 
