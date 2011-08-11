@@ -17,8 +17,8 @@ module_description "fr",
     name "Ombrage"
     description "Permet d'ajouter des effets d'ombrages non-photoréalistes dans une scène."
 
-SHADER4_AVAILABLE -> true
-SHADER4_AVAILABLE := is_ext_available "GL_EXT_gpu_shader4"
+SHADER4_AVAILABLE_SHADING -> true
+SHADER4_AVAILABLE_SHADING := is_ext_available "GL_EXT_gpu_shader4"
 
 // -------------------------------------------------------------------------------------------------------------------
 //   Cel shading (or Toon shading)
@@ -41,7 +41,7 @@ cel_color r:real, g:real, b:real ->
     CELL_COLOR_B := b
 
 cel_shading ->
-    if SHADER4_AVAILABLE = true then
+    if SHADER4_AVAILABLE_SHADING = true then
         cel_shading_lights
     else
         cel_shading_no_lights
@@ -254,7 +254,7 @@ gooch_shading ->
     * between these define by surface_color, cool_color and warm_color.
     * Mixing coefficients are defined by diffuse_warm and diffuse_cool.
     **/
-    if SHADER4_AVAILABLE = true then
+    if SHADER4_AVAILABLE_SHADING = true then
         gooch_shading_lights
     else
         gooch_shading_no_lights
