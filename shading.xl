@@ -53,28 +53,35 @@ cel_shading_lights ->
     shader_program
         shader_log
         vertex_shader <<
+            varying vec3 normal;
+            varying vec3 eyePos;
+            void main()
+            {
+                gl_Position = ftransform();
+
+                normal = normalize(gl_NormalMatrix * gl_Normal);
+                eyePos = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+            }
+            >>
+        fragment_shader <<
             #extension GL_EXT_gpu_shader4 : require
 
             uniform vec3 cel_color;
             uniform int  lights;
 
-            varying vec3 color;
+            varying vec3 normal;
+            varying vec3 eyePos;
             void main()
             {
                 // Define a maximum of lights
                 int MAX_LIGHTS = 8;
-
-                gl_Position = ftransform();
-
-                vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-                vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
 
                 float diff = 0.0;
                 float spec = 0.0;
 
                 if(lights == 0)
                 {
-                    vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
+                    vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyePos);
                     vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
                     //Diffuse intensity
@@ -82,7 +89,7 @@ cel_shading_lights ->
 
                     //Specular intensity
                     if (diff > 0.0)
-                       spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                       spec = max(dot(reflectVec, -eyePos), 0.0);
 
                     diff = diff * 0.6 + spec * 0.4;
                 }
@@ -92,7 +99,7 @@ cel_shading_lights ->
                     {
                         if(bool(lights & (1 << i)))
                         {
-                            vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - eyeCoordinates);
+                            vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - eyePos);
                             vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
                             //Diffuse intensity
@@ -100,13 +107,14 @@ cel_shading_lights ->
 
                             //Specular intensity
                             if (diffTmp > 0.0)
-                               spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                               spec = max(dot(reflectVec, -eyePos), 0.0);
 
                             diff +=  diffTmp * 0.6 + spec * 0.4;
                         }
                     }
                 }
 
+                vec3 color;
                 //Compute final color
                 if(diff < 0.2)
                    color = cel_color * 0.5;
@@ -114,12 +122,6 @@ cel_shading_lights ->
                    color = cel_color * 0.75;
                 else
                    color = cel_color;
-            }
-            >>
-        fragment_shader <<
-            varying vec3 color;
-            void main()
-            {
                 gl_FragColor = vec4(color, 1.0);
             }
             >>
@@ -133,20 +135,27 @@ cel_shading_no_lights ->
     shader_program
         shader_log
         vertex_shader <<
-            uniform vec3 cel_color;
-
-            varying vec3 color;
+            varying vec3 normal;
+            varying vec3 eyePos;
             void main()
             {
                 gl_Position = ftransform();
 
-                vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-                vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+                normal = normalize(gl_NormalMatrix * gl_Normal);
+                eyePos = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+            }
+            >>
+        fragment_shader <<
+            uniform vec3 cel_color;
 
+            varying vec3 normal;
+            varying vec3 eyePos;
+            void main()
+            {
                 float diff = 0.0;
                 float spec = 0.0;
 
-                vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
+                vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyePos);
                 vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
                 //Diffuse intensity
@@ -154,10 +163,11 @@ cel_shading_no_lights ->
 
                 //Specular intensity
                 if (diff > 0.0)
-                   spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                   spec = max(dot(reflectVec, -eyePos), 0.0);
 
                 diff = diff * 0.6 + spec * 0.4;
 
+                vec3 color;
                 //Compute final color
                 if(diff < 0.2)
                    color = cel_color * 0.5;
@@ -165,12 +175,6 @@ cel_shading_no_lights ->
                    color = cel_color * 0.75;
                 else
                    color = cel_color;
-            }
-            >>
-        fragment_shader <<
-            varying vec3 color;
-            void main()
-            {
                 gl_FragColor = vec4(color, 1.0);
             }
             >>
@@ -266,6 +270,18 @@ gooch_shading_lights ->
     shader_program
         shader_log
         vertex_shader <<
+           varying vec3 normal;
+           varying vec3 eyePos;
+
+           void main()
+           {
+               gl_Position = ftransform();
+
+               normal = normalize(gl_NormalMatrix * gl_Normal);
+               eyePos = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+           }
+           >>
+        fragment_shader <<
            #extension GL_EXT_gpu_shader4 : require
 
            uniform float diffuse_warm;
@@ -277,24 +293,19 @@ gooch_shading_lights ->
 
            uniform int  lights;
 
-           varying vec3 color;
-
+           varying vec3 normal;
+           varying vec3 eyePos;
            void main()
-           {
+           {           
                // Define a maximum of lights
                int MAX_LIGHTS = 8;
-
-               gl_Position = ftransform();
-
-               vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-               vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
 
                float diff = 0.0;
                float spec = 0.0;
 
                if(lights == 0)
                {
-                   vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
+                   vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyePos);
                    vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
                    //Diffuse intensity
@@ -303,7 +314,7 @@ gooch_shading_lights ->
                    //Specular intensity
                    if (diff > 0.0)
                    {
-                      spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                      spec = max(dot(reflectVec, -eyePos), 0.0);
                       spec = pow(spec, 32.0);
                    }
                }
@@ -314,7 +325,7 @@ gooch_shading_lights ->
                        if(bool(lights & (1 << i)))
                        {
 
-                           vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - eyeCoordinates);
+                           vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - eyePos);
                            vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
                            //Diffuse intensity
@@ -323,7 +334,7 @@ gooch_shading_lights ->
                            //Specular intensity
                            if (diffTmp > 0.0)
                            {
-                              float specTmp = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                              float specTmp = max(dot(reflectVec, -eyePos), 0.0);
                               spec += pow(specTmp, 32.0);
                            }
 
@@ -338,14 +349,7 @@ gooch_shading_lights ->
                vec3 kfinal = mix(kcool, kwarm, diff);
 
                //Compute final color
-               color = min(kfinal + spec, 1.0);
-           }
-           >>
-        fragment_shader <<
-           varying vec3 color;
-           void main()
-           {
-               gl_FragColor = vec4(color, 1.0);
+               gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);
            }
            >>
     shader_set lights        := light_id
@@ -362,6 +366,17 @@ gooch_shading_no_lights ->
     shader_program
         shader_log
         vertex_shader <<
+           varying vec3 normal;
+           varying vec3 eyePos;
+           void main()
+           {
+               gl_Position = ftransform();
+
+               normal = normalize(gl_NormalMatrix * gl_Normal);
+               eyePos = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+           }
+           >>
+        fragment_shader <<
            uniform float diffuse_warm;
            uniform float diffuse_cool;
 
@@ -369,18 +384,14 @@ gooch_shading_no_lights ->
            uniform vec3 cool_color;
            uniform vec3 surface_color;
 
-           varying vec3 color;
+           varying vec3 normal;
+           varying vec3 eyePos;
            void main()
            {
-               gl_Position = ftransform();
-
-               vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-               vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
-
                float diff = 0.0;
                float spec = 0.0;
 
-               vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
+               vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyePos);
                vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
                //Diffuse intensity
@@ -389,7 +400,7 @@ gooch_shading_no_lights ->
                //Specular intensity
                if (diff > 0.0)
                {
-                  spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                  spec = max(dot(reflectVec, -eyePos), 0.0);
                   spec = pow(spec, 32.0);
                }
 
@@ -399,14 +410,7 @@ gooch_shading_no_lights ->
                vec3 kfinal = mix(kcool, kwarm, diff);
 
                //Compute final color
-               color = min(kfinal + spec, 1.0);
-           }
-           >>
-        fragment_shader <<
-           varying vec3 color;
-           void main()
-           {
-               gl_FragColor = vec4(color, 1.0);
+               gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);
            }
            >>
     shader_set diffuse_warm  := DIFFUSE_WARM;
