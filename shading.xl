@@ -125,7 +125,7 @@ cel_shading_lights ->
                 gl_FragColor = vec4(color, 1.0);
             }
             >>
-    shader_set lights    := light_id
+    shader_set lights    := lights_mask
     shader_set cel_color := (CELL_COLOR_R; CELL_COLOR_G; CELL_COLOR_B)
 
 cel_shading_no_lights ->
@@ -352,7 +352,7 @@ gooch_shading_lights ->
                gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);
            }
            >>
-    shader_set lights        := light_id
+    shader_set lights        := lights_mask;
     shader_set diffuse_warm  := DIFFUSE_WARM;
     shader_set diffuse_cool  := DIFFUSE_COOL;
     shader_set warm_color    := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)
