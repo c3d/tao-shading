@@ -17,6 +17,7 @@ module_description "fr",
     name "Ombrage"
     description "Permet d'ajouter des effets d'ombrages non-photoréalistes dans une scène."
 
+// Check if GL_EXT_gpu_shader4 is supported in Tao
 SHADER4_AVAILABLE_SHADING -> true
 SHADER4_AVAILABLE_SHADING := is_ext_available "GL_EXT_gpu_shader4"
 
@@ -24,7 +25,7 @@ SHADER4_AVAILABLE_SHADING := is_ext_available "GL_EXT_gpu_shader4"
 //   Cel shading (or Toon shading)
 //   For further informations, see http://en.wikipedia.org/wiki/Cel-shaded_animation
 // -------------------------------------------------------------------------------------------------------------------
-//Define cell-shading color
+//Define cel-shading color
 CELL_COLOR_R -> 1.0
 CELL_COLOR_R := 1.0
 CELL_COLOR_G -> 1.0
@@ -34,13 +35,16 @@ CELL_COLOR_B := 1.0
 
 cel_color r:real, g:real, b:real ->
     /**
-    * Define main color of cell shading.
+    * Define main color of cel-shading.
     **/
     CELL_COLOR_R := r
     CELL_COLOR_G := g
     CELL_COLOR_B := b
 
 cel_shading ->
+    /**
+    * Apply cel-shading
+    **/
     if SHADER4_AVAILABLE_SHADING = true then
         cel_shading_lights
     else
@@ -48,41 +52,48 @@ cel_shading ->
 
 cel_shading_lights ->
     /**
-    * Apply cell shading on current scene with a full support of lights.
+    * Apply cel-shading on current scene with a full support of lights.
     **/
     shader_program
         shader_log
         vertex_shader <<
-            #extension GL_EXT_gpu_shader4 : require
+            varying vec3 normal;
+            varying vec3 viewDir;
+            void main()
+            {
+                gl_Position = ftransform();
 
+                // Get normal and view direction
+                normal  = normalize(gl_NormalMatrix * gl_Normal);
+                viewDir = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+            }
+            >>
+        fragment_shader <<
+            #extension GL_EXT_gpu_shader4 : require
             uniform vec3 cel_color;
             uniform int  lights;
 
-            varying vec3 color;
+            varying vec3 normal;
+            varying vec3 viewDir;
             void main()
             {
-                // Define a maximum of lights
+                // Define a maximum of lights supported
                 int MAX_LIGHTS = 8;
-
-                gl_Position = ftransform();
-
-                vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-                vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
 
                 float diff = 0.0;
                 float spec = 0.0;
 
                 if(lights == 0)
                 {
-                    vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
-                    vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
+                    vec3 lightDir   = normalize(gl_LightSource[0].position.xyz - viewDir);
+                    vec3 reflectVec = normalize(reflect( -lightDir, normal ));
 
-                    //Diffuse intensity
+                    // Diffuse intensity
                     diff = max(dot(normal,lightDir), 0.0);
 
-                    //Specular intensity
+                    // Specular intensity
                     if (diff > 0.0)
-                       spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                       spec = max(dot(reflectVec, -viewDir), 0.0);
 
                     diff = diff * 0.6 + spec * 0.4;
                 }
@@ -92,89 +103,89 @@ cel_shading_lights ->
                     {
                         if(bool(lights & (1 << i)))
                         {
-                            vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - eyeCoordinates);
+                            vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - viewDir);
                             vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
-                            //Diffuse intensity
+                            // Diffuse intensity
                             float diffTmp = max(dot(normal,lightDir), 0.0);
 
-                            //Specular intensity
+                            // Specular intensity
                             if (diffTmp > 0.0)
-                               spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                               spec = max(dot(reflectVec, -viewDir), 0.0);
 
                             diff +=  diffTmp * 0.6 + spec * 0.4;
                         }
                     }
                 }
 
-                //Compute final color
+                vec3 color;
+                // Compute final color
                 if(diff < 0.2)
                    color = cel_color * 0.5;
                 else if(diff < 0.5)
                    color = cel_color * 0.75;
                 else
                    color = cel_color;
-            }
-            >>
-        fragment_shader <<
-            varying vec3 color;
-            void main()
-            {
+
                 gl_FragColor = vec4(color, 1.0);
             }
             >>
-    shader_set lights    := light_id
-    shader_set cel_color := (CELL_COLOR_R; CELL_COLOR_G; CELL_COLOR_B)
+    shader_set lights    := lights_mask                                 // Bitmask of lights supported
+    shader_set cel_color := (CELL_COLOR_R; CELL_COLOR_G; CELL_COLOR_B)  // Color cel-shading
 
 cel_shading_no_lights ->
     /**
-    * Apply cell shading on current scene with a support of an unique light.
+    * Apply cel-shading on current scene with a support of an unique light.
     **/
     shader_program
         shader_log
         vertex_shader <<
-            uniform vec3 cel_color;
-
-            varying vec3 color;
+            varying vec3 normal;
+            varying vec3 viewDir;
             void main()
             {
                 gl_Position = ftransform();
 
-                vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-                vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+                // Get normal and view direction
+                normal  = normalize(gl_NormalMatrix * gl_Normal);
+                viewDir = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+            }
+            >>
+        fragment_shader <<
+            uniform vec3 cel_color;
 
+            varying vec3 normal;
+            varying vec3 viewDir;
+            void main()
+            {
                 float diff = 0.0;
                 float spec = 0.0;
 
-                vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
-                vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
+                vec3 lightDir   = normalize(gl_LightSource[0].position.xyz - viewDir);
+                vec3 reflectVec = normalize(reflect( -lightDir, normal ));
 
-                //Diffuse intensity
+                // Diffuse intensity
                 diff = max(dot(normal,lightDir), 0.0);
 
-                //Specular intensity
+                // Specular intensity
                 if (diff > 0.0)
-                   spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                   spec = max(dot(reflectVec, -viewDir), 0.0);
 
                 diff = diff * 0.6 + spec * 0.4;
 
-                //Compute final color
+                vec3 color;
+                // Compute final color
                 if(diff < 0.2)
                    color = cel_color * 0.5;
                 else if(diff < 0.5)
                    color = cel_color * 0.75;
                 else
                    color = cel_color;
-            }
-            >>
-        fragment_shader <<
-            varying vec3 color;
-            void main()
-            {
+
                 gl_FragColor = vec4(color, 1.0);
             }
             >>
-    shader_set cel_color := (CELL_COLOR_R; CELL_COLOR_G; CELL_COLOR_B)
+    shader_set cel_color := (CELL_COLOR_R; CELL_COLOR_G; CELL_COLOR_B) // Color of cel-shading
 
 // -------------------------------------------------------------------------------------------------------------------
 //   Gooch shading
@@ -266,8 +277,20 @@ gooch_shading_lights ->
     shader_program
         shader_log
         vertex_shader <<
-           #extension GL_EXT_gpu_shader4 : require
+           varying vec3 normal;
+           varying vec3 viewDir;
 
+           void main()
+           {
+               gl_Position = ftransform();
+
+               // Get normal and view direction
+               normal  = normalize(gl_NormalMatrix * gl_Normal);
+               viewDir = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+           }
+           >>
+        fragment_shader <<
+           #extension GL_EXT_gpu_shader4 : require
            uniform float diffuse_warm;
            uniform float diffuse_cool;
 
@@ -277,33 +300,28 @@ gooch_shading_lights ->
 
            uniform int  lights;
 
-           varying vec3 color;
-
+           varying vec3 normal;
+           varying vec3 viewDir;
            void main()
-           {
+           {           
                // Define a maximum of lights
                int MAX_LIGHTS = 8;
-
-               gl_Position = ftransform();
-
-               vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-               vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
 
                float diff = 0.0;
                float spec = 0.0;
 
                if(lights == 0)
                {
-                   vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
-                   vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
+                   vec3 lightDir   = normalize(gl_LightSource[0].position.xyz - viewDir);
+                   vec3 reflectVec = normalize(reflect( -lightDir, normal ));
 
-                   //Diffuse intensity
+                   // Diffuse intensity
                    diff = max(dot(normal,lightDir), 0.0);
 
-                   //Specular intensity
+                   // Specular intensity
                    if (diff > 0.0)
                    {
-                      spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                      spec = max(dot(reflectVec, -viewDir), 0.0);
                       spec = pow(spec, 32.0);
                    }
                }
@@ -314,16 +332,16 @@ gooch_shading_lights ->
                        if(bool(lights & (1 << i)))
                        {
 
-                           vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - eyeCoordinates);
+                           vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - viewDir);
                            vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
-                           //Diffuse intensity
+                           // Diffuse intensity
                            float diffTmp = max(dot(normal,lightDir), 0.0);
 
-                           //Specular intensity
+                           // Specular intensity
                            if (diffTmp > 0.0)
                            {
-                              float specTmp = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                              float specTmp = max(dot(reflectVec, -viewDir), 0.0);
                               spec += pow(specTmp, 32.0);
                            }
 
@@ -332,28 +350,21 @@ gooch_shading_lights ->
                    }
                }
 
-               //Mix colors
+               // Mix colors
                vec3 kcool  = min(cool_color + diffuse_cool * surface_color, 1.0);
                vec3 kwarm  = min(warm_color + diffuse_warm * surface_color, 1.0);
                vec3 kfinal = mix(kcool, kwarm, diff);
 
-               //Compute final color
-               color = min(kfinal + spec, 1.0);
+               // Compute final color
+               gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);
            }
            >>
-        fragment_shader <<
-           varying vec3 color;
-           void main()
-           {
-               gl_FragColor = vec4(color, 1.0);
-           }
-           >>
-    shader_set lights        := light_id
-    shader_set diffuse_warm  := DIFFUSE_WARM;
-    shader_set diffuse_cool  := DIFFUSE_COOL;
-    shader_set warm_color    := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)
-    shader_set cool_color    := (COOL_COLOR_R; COOL_COLOR_G; COOL_COLOR_B)
-    shader_set surface_color := (SURFACE_COLOR_R; SURFACE_COLOR_G; SURFACE_COLOR_B)
+    shader_set lights        := lights_mask;                                        // Bitmask of lights supported
+    shader_set diffuse_warm  := DIFFUSE_WARM;                                       // Ratio of warm diffuse
+    shader_set diffuse_cool  := DIFFUSE_COOL;                                       // Ratio of cool diffuse
+    shader_set warm_color    := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)          // Warm color
+    shader_set cool_color    := (COOL_COLOR_R; COOL_COLOR_G; COOL_COLOR_B)          // Cool color
+    shader_set surface_color := (SURFACE_COLOR_R; SURFACE_COLOR_G; SURFACE_COLOR_B) // Surface color
 
 gooch_shading_no_lights ->
     /**
@@ -362,6 +373,18 @@ gooch_shading_no_lights ->
     shader_program
         shader_log
         vertex_shader <<
+           varying vec3 normal;
+           varying vec3 viewDir;
+           void main()
+           {
+               gl_Position = ftransform();
+
+               // Get normal and view direction
+               normal  = normalize(gl_NormalMatrix * gl_Normal);
+               viewDir = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
+           }
+           >>
+        fragment_shader <<
            uniform float diffuse_warm;
            uniform float diffuse_cool;
 
@@ -369,48 +392,37 @@ gooch_shading_no_lights ->
            uniform vec3 cool_color;
            uniform vec3 surface_color;
 
-           varying vec3 color;
+           varying vec3 normal;
+           varying vec3 viewDir;
            void main()
            {
-               gl_Position = ftransform();
-
-               vec3 normal         = normalize(gl_NormalMatrix * gl_Normal);
-               vec3 eyeCoordinates = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);
-
                float diff = 0.0;
                float spec = 0.0;
 
-               vec3 lightDir       = normalize(gl_LightSource[0].position.xyz - eyeCoordinates);
-               vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
+               vec3 lightDir   = normalize(gl_LightSource[0].position.xyz - viewDir);
+               vec3 reflectVec = normalize(reflect( -lightDir, normal ));
 
-               //Diffuse intensity
+               // Diffuse intensity
                diff = max(dot(normal,lightDir), 0.0);
 
-               //Specular intensity
+               // Specular intensity
                if (diff > 0.0)
                {
-                  spec = max(dot(reflectVec, -eyeCoordinates), 0.0);
+                  spec = max(dot(reflectVec, -viewDir), 0.0);
                   spec = pow(spec, 32.0);
                }
 
-               //Mix colors
+               // Mix colors
                vec3 kcool  = min(cool_color + diffuse_cool * surface_color, 1.0);
                vec3 kwarm  = min(warm_color + diffuse_warm * surface_color, 1.0);
                vec3 kfinal = mix(kcool, kwarm, diff);
 
-               //Compute final color
-               color = min(kfinal + spec, 1.0);
+               // Compute final color
+               gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);
            }
            >>
-        fragment_shader <<
-           varying vec3 color;
-           void main()
-           {
-               gl_FragColor = vec4(color, 1.0);
-           }
-           >>
-    shader_set diffuse_warm  := DIFFUSE_WARM;
-    shader_set diffuse_cool  := DIFFUSE_COOL;
-    shader_set warm_color    := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)
-    shader_set cool_color    := (COOL_COLOR_R; COOL_COLOR_G; COOL_COLOR_B)
-    shader_set surface_color := (SURFACE_COLOR_R; SURFACE_COLOR_G; SURFACE_COLOR_B)
+    shader_set diffuse_warm  := DIFFUSE_WARM;                                       // Ratio of warm diffuse
+    shader_set diffuse_cool  := DIFFUSE_COOL;                                       // Ratio of cool diffuse
+    shader_set warm_color    := (WARM_COLOR_R; WARM_COLOR_G; WARM_COLOR_B)          // Warm color
+    shader_set cool_color    := (COOL_COLOR_R; COOL_COLOR_G; COOL_COLOR_B)          // Cool color
+    shader_set surface_color := (SURFACE_COLOR_R; SURFACE_COLOR_G; SURFACE_COLOR_B) // Surface color
