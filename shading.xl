@@ -332,8 +332,8 @@ gooch_shading_lights ->
                        if(bool(lights & (1 << i)))
                        {
 
-                           vec3 lightDir   = normalize(gl_LightSource[i].position.xyz - viewDir);
-                           vec3 reflectVec = normalize(reflect( -lightDir, normal ));
+                           vec3 lightDir       = normalize(gl_LightSource[i].position.xyz - viewDir);
+                           vec3 reflectVec     = normalize(reflect( -lightDir, normal ));
 
                            // Diffuse intensity
                            float diffTmp = max(dot(normal,lightDir), 0.0);
