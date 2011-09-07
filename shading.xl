@@ -45,10 +45,10 @@ cel_shading ->
     /**
     * Apply cel-shading
     **/
-    if SHADER4_AVAILABLE_SHADING = true then
-        cel_shading_lights
-    else
+    if SHADER4_AVAILABLE_SHADING = false then
         cel_shading_no_lights
+    else
+        cel_shading_lights
 
 cel_shading_lights ->
     /**
@@ -265,10 +265,10 @@ gooch_shading ->
     * between these define by surface_color, cool_color and warm_color.
     * Mixing coefficients are defined by diffuse_warm and diffuse_cool.
     **/
-    if SHADER4_AVAILABLE_SHADING = true then
-        gooch_shading_lights
-    else
+    if SHADER4_AVAILABLE_SHADING = false then
         gooch_shading_no_lights
+    else
+        gooch_shading_lights
 
 gooch_shading_lights ->
     /**
