@@ -1,8 +1,8 @@
 # ******************************************************************************
-#  shading.pro                                                      Tao project
+#  hello_world.pro                                                  Tao project
 # ******************************************************************************
 # File Description:
-# Qt build file for the Shading module
+# Qt build file for the Hello World module
 # ******************************************************************************
 # This software is property of Taodyne SAS - Confidential
 # Ce logiciel est la propriété de Taodyne SAS - Confidentiel
@@ -14,26 +14,7 @@ MODINSTDIR = shading
 
 include(../modules.pri)
 
-DEFINES     += GLEW_STATIC
+OTHER_FILES = shading.xl
 
-INCLUDEPATH += $${TAOTOPSRC}/tao/include/tao/
-HEADERS = \
-          shading.h \
-          cel_shading.h \
-          gooch_shading.h \
-
-SOURCES = shading.cpp $${TAOTOPSRC}/tao/include/tao/GL/glew.c \
-          cel_shading.cpp \
-          gooch_shading.cpp \
-
-TBL_SOURCES  = shading.tbl
-
-OTHER_FILES = shading.xl shading.tbl traces.tbl
-QT          += core \
-               gui \
-               opengl
-
+INSTALLS    -= thismod_bin
 INSTALLS    += thismod_icon
-
-LICENSE_FILES = shading.taokey.notsigned
-include(../licenses.pri)
