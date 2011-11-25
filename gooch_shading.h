@@ -32,9 +32,9 @@ struct GoochShading : public Shading
     GoochShading();
     ~GoochShading();
 
-    void setWarmColor(coord r, coord g, coord b);
-    void setCoolColor(coord r, coord g, coord b);
-    void setSurfaceColor(coord r, coord g, coord b);
+    void setWarmColor(GLfloat color[3]);
+    void setCoolColor(GLfloat color[3]);
+    void setSurfaceColor(GLfloat color[3]);
 
     void setWarmDiffuse(coord d);
     void setCoolDiffuse(coord d);
@@ -56,8 +56,9 @@ private:
    GLfloat wd;
    GLfloat cd;
 
-   static QGLShaderProgram* pgm;
    static bool failed;
+   static QGLShaderProgram* pgm;
+   static std::map<text, GLint> uniforms;
 };
 
 

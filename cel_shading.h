@@ -40,7 +40,7 @@ struct CelShading : public Shading
     CelShading();
     ~CelShading();
 
-    void setCelColor(coord r, coord g, coord b);
+    void setCelColor(GLfloat color[3]);
 
     // Draw mapping
     virtual void    Draw();
@@ -52,8 +52,9 @@ struct CelShading : public Shading
 private:
    GLfloat cel[3];
 
-   static QGLShaderProgram* pgm;
    static bool failed;
+   static QGLShaderProgram* pgm;
+   static std::map<text, GLint> uniforms;
 };
 
 

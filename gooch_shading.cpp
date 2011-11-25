@@ -27,8 +27,9 @@
 //
 // ============================================================================
 
-QGLShaderProgram *GoochShading::pgm = NULL;
-bool		  GoochShading::failed = false;
+bool                  GoochShading::failed = false;
+QGLShaderProgram*     GoochShading::pgm = NULL;
+std::map<text, GLint> GoochShading::uniforms;
 
 GoochShading::GoochShading()
 // ----------------------------------------------------------------------------
@@ -42,16 +43,16 @@ GoochShading::GoochShading()
 
         // Basic vertex shader
         static string vSrc =
-             "varying vec3 normal;"
-             "varying vec3 viewDir;"
-             "void main()"
-             "{"
-             "    gl_Position = ftransform();"
+                "varying vec3 normal;"
+                "varying vec3 viewDir;"
+                "void main()"
+                "{"
+                "    gl_Position = ftransform();"
 
-             "    /* Get normal and view direction */"
-             "    normal  = normalize(gl_NormalMatrix * gl_Normal);"
-             "    viewDir = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);"
-             "}";
+                "    /* Get normal and view direction */"
+                "    normal  = normalize(gl_NormalMatrix * gl_Normal);"
+                "    viewDir = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);"
+                "}";
 
         static string fSrc;
         if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
@@ -194,6 +195,15 @@ GoochShading::GoochShading()
         }
 
         pgm->link();
+
+        // Save uniform locations
+        uint id = pgm->programId();
+        uniforms["warm_color"] = glGetUniformLocation(id, "warm_color");
+        uniforms["cool_color"] = glGetUniformLocation(id, "cool_color");
+        uniforms["surface_color"] = glGetUniformLocation(id, "surface_color");
+        uniforms["warm_diffuse"] = glGetUniformLocation(id, "warm_diffuse");
+        uniforms["cool_diffuse"] = glGetUniformLocation(id, "cool_diffuse");
+        uniforms["lights"] = glGetUniformLocation(id, "lights");
     }
 }
 
@@ -205,37 +215,52 @@ GoochShading::~GoochShading()
 }
 
 
-void GoochShading::setCoolColor(coord r, coord g, coord b)
+void GoochShading::setCoolColor(GLfloat color[3])
+// ----------------------------------------------------------------------------
+//   Set cool color
+// ----------------------------------------------------------------------------
 {
-    warm[0] = r;
-    warm[1] = g;
-    warm[2] = b;
+    warm[0] = color[0];
+    warm[1] = color[1];
+    warm[2] = color[2];
 }
 
 
-void GoochShading::setWarmColor(coord r, coord g, coord b)
+void GoochShading::setWarmColor(GLfloat color[3])
+// ----------------------------------------------------------------------------
+//   Set warm color
+// ----------------------------------------------------------------------------
 {
-    cool[0] = r;
-    cool[1] = g;
-    cool[2] = b;
+    cool[0] = color[0];
+    cool[1] = color[1];
+    cool[2] = color[2];
 }
 
 
-void GoochShading::setSurfaceColor(coord r, coord g, coord b)
+void GoochShading::setSurfaceColor(GLfloat color[3])
+// ----------------------------------------------------------------------------
+//   Set surface color
+// ----------------------------------------------------------------------------
 {
-    surface[0] = r;
-    surface[1] = g;
-    surface[2] = b;
+    surface[0] = color[0];
+    surface[1] = color[1];
+    surface[2] = color[2];
 }
 
 
 void GoochShading::setWarmDiffuse(coord d)
+// ----------------------------------------------------------------------------
+//   Set warm diffuse coefficient
+// ----------------------------------------------------------------------------
 {
     wd = d;
 }
 
 
 void GoochShading::setCoolDiffuse(coord d)
+// ----------------------------------------------------------------------------
+//   Set cool diffuse coefficient
+// ----------------------------------------------------------------------------
 {
     cd = d;
 }
@@ -268,6 +293,9 @@ void GoochShading::delete_callback(void *arg)
 
 
 void GoochShading::Draw()
+// ----------------------------------------------------------------------------
+//   Apply Gooch Shading
+// ----------------------------------------------------------------------------
 {
     if (!tested)
     {
@@ -278,31 +306,23 @@ void GoochShading::Draw()
         return;
 
     uint id = pgm->programId();
-    tao->SetShader(pgm->programId());
-
     if(id)
-    {
+    {        
+        tao->SetShader(id);
+
         // Set gooch colors
-        GLint warm_color = glGetUniformLocation(id, "warm_color");
-        glUniform3fv(warm_color, 1, warm);
-        GLint cool_color = glGetUniformLocation(id, "cool_color");
-        glUniform3fv(cool_color, 1, cool);
-        GLint surface_color = glGetUniformLocation(id, "surface_color");
-        glUniform3fv(surface_color, 1, surface);
+        glUniform3fv(uniforms["warm_color"], 1, warm);
+        glUniform3fv(uniforms["cool_color"], 1, cool);
+        glUniform3fv(uniforms["surface_color"], 1, surface);
 
         // Set gooch coeffs
-        GLint warm_diffuse = glGetUniformLocation(id, "warm_diffuse");
-        glUniform1f(warm_diffuse, wd);
-        GLint cool_diffuse = glGetUniformLocation(id, "cool_diffuse");
-        glUniform1f(cool_diffuse, cd);
-
+        glUniform1f(uniforms["warm_diffuse"], wd);
+        glUniform1f(uniforms["cool_diffuse"], cd);
 
         if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
         {
-            GLint lights = glGetUniformLocation(id, "lights");
             GLint lightsmask = tao->EnabledLights();
-
-            glUniform1i(lights, lightsmask);
+            glUniform1i(uniforms["lights"], lightsmask);
         }
     }
 }

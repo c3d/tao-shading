@@ -25,14 +25,16 @@ bool Shading::licensed = false;
 
 const Tao::ModuleApi *Shading::tao = NULL;
 
+
 // ============================================================================
 //
 //    Cel Shading
 //
 // ============================================================================
 
-QGLShaderProgram *CelShading::pgm = NULL;
-bool		  CelShading::failed = false;
+bool                  CelShading::failed = false;
+QGLShaderProgram*     CelShading::pgm = NULL;
+std::map<text, GLint> CelShading::uniforms;
 
 CelShading::CelShading()
 // ----------------------------------------------------------------------------
@@ -46,16 +48,16 @@ CelShading::CelShading()
 
         // Basic vertex shader
         static string vSrc =
-             "varying vec3 normal;"
-             "varying vec3 viewDir;"
-             "void main()"
-             "{"
-             "    gl_Position = ftransform();"
+                "varying vec3 normal;"
+                "varying vec3 viewDir;"
+                "void main()"
+                "{"
+                "    gl_Position = ftransform();"
 
-             "    /* Get normal and view direction */"
-             "    normal  = normalize(gl_NormalMatrix * gl_Normal);"
-             "    viewDir = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);"
-             "}";
+                "    /* Get normal and view direction */"
+                "    normal  = normalize(gl_NormalMatrix * gl_Normal);"
+                "    viewDir = normalize((gl_ModelViewMatrix * gl_Vertex).xyz);"
+                "}";
 
         static string fSrc;
         if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
@@ -188,6 +190,11 @@ CelShading::CelShading()
         }
 
         pgm->link();
+
+        // Save uniform locations
+        uint id = pgm->programId();
+        uniforms["cel_color"] = glGetUniformLocation(id, "cel_color");
+        uniforms["lights"] = glGetUniformLocation(id, "lights");
     }
 }
 
@@ -199,11 +206,14 @@ CelShading::~CelShading()
 }
 
 
-void CelShading::setCelColor(coord r, coord g, coord b)
+void CelShading::setCelColor(GLfloat color[3])
+// ----------------------------------------------------------------------------
+//   Set Cel Shading color
+// ----------------------------------------------------------------------------
 {
-    cel[0] = r;
-    cel[1] = g;
-    cel[2] = b;
+    cel[0] = color[0];
+    cel[1] = color[1];
+    cel[2] = color[2];
 }
 
 
@@ -234,6 +244,9 @@ void CelShading::delete_callback(void *arg)
 
 
 void CelShading::Draw()
+// ----------------------------------------------------------------------------
+//   Apply Cel Shading
+// ----------------------------------------------------------------------------
 {
     if (!tested)
     {
@@ -244,20 +257,17 @@ void CelShading::Draw()
         return;
 
     uint id = pgm->programId();
-    tao->SetShader(pgm->programId());
-
     if(id)
     {
+        tao->SetShader(id);
+
         // Set cel color
-        GLint cel_color = glGetUniformLocation(id, "cel_color");
-        glUniform3fv(cel_color, 1, cel);
+        glUniform3fv(uniforms["cel_color"], 1, cel);
 
         if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
         {
-            GLint lights = glGetUniformLocation(id, "lights");
             GLint lightsmask = tao->EnabledLights();
-
-            glUniform1i(lights, lightsmask);
+            glUniform1i(uniforms["lights"], lightsmask);
         }
     }
 }

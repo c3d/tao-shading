@@ -50,7 +50,7 @@ Tree_p cel_shading(Tree_p)
 // ----------------------------------------------------------------------------
 {       
     CelShading* cel = new CelShading();
-    cel->setCelColor(celColor[0], celColor[1], celColor[2]);
+    cel->setCelColor(celColor);
 
     Shading::tao->AddToLayout2(CelShading::render_callback,
                                CelShading::identify_callback,
@@ -126,9 +126,9 @@ Tree_p gooch_shading(Tree_p)
 {
     GoochShading* gooch = new GoochShading();
 
-    gooch->setWarmColor(warmColor[0], warmColor[1], warmColor[2]);
-    gooch->setCoolColor(coolColor[0], coolColor[1], coolColor[2]);
-    gooch->setSurfaceColor(surfaceColor[0], surfaceColor[1], surfaceColor[2]);
+    gooch->setWarmColor(warmColor);
+    gooch->setCoolColor(coolColor);
+    gooch->setSurfaceColor(surfaceColor);
 
     gooch->setWarmDiffuse(warmDiffuse);
     gooch->setCoolDiffuse(coolDiffuse);
