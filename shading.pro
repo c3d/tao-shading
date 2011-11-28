@@ -14,7 +14,26 @@ MODINSTDIR = shading
 
 include(../modules.pri)
 
-OTHER_FILES = shading.xl
+DEFINES     += GLEW_STATIC
 
-INSTALLS    -= thismod_bin
+INCLUDEPATH += $${TAOTOPSRC}/tao/include/tao/
+HEADERS = \
+          shading.h \
+          cel_shading.h \
+          gooch_shading.h \
+
+SOURCES = shading.cpp $${TAOTOPSRC}/tao/include/tao/GL/glew.c \
+          cel_shading.cpp \
+          gooch_shading.cpp \
+
+TBL_SOURCES  = shading.tbl
+
+OTHER_FILES = shading.xl shading.tbl traces.tbl
+QT          += core \
+               gui \
+               opengl
+
 INSTALLS    += thismod_icon
+
+LICENSE_FILES = shading.taokey.notsigned
+include(../licenses.pri)
