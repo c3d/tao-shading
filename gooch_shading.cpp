@@ -275,7 +275,7 @@ void GoochShading::render_callback(void *arg)
 }
 
 
-void GoochShading::identify_callback(void *arg)
+void GoochShading::identify_callback(void *)
 // ----------------------------------------------------------------------------
 //   Identify callback: don't do anything
 // ----------------------------------------------------------------------------
