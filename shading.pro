@@ -1,8 +1,8 @@
 # ******************************************************************************
-#  hello_world.pro                                                  Tao project
+#  shading.pro                                                      Tao project
 # ******************************************************************************
 # File Description:
-# Qt build file for the Hello World module
+# Qt build file for the Shading module
 # ******************************************************************************
 # This software is property of Taodyne SAS - Confidential
 # Ce logiciel est la propriété de Taodyne SAS - Confidentiel

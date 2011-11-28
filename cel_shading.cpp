@@ -226,7 +226,7 @@ void CelShading::render_callback(void *arg)
 }
 
 
-void CelShading::identify_callback(void *)
+void CelShading::identify_callback(void *arg)
 // ----------------------------------------------------------------------------
 //   Identify callback: don't do anything
 // ----------------------------------------------------------------------------
