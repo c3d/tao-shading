@@ -39,7 +39,7 @@ struct GoochShading : public Shading
     void setWarmDiffuse(coord d);
     void setCoolDiffuse(coord d);
 
-    // Draw mapping
+    // Draw gooch shading
     virtual void    Draw();
 
     static void     render_callback(void *arg);

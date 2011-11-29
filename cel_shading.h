@@ -42,7 +42,7 @@ struct CelShading : public Shading
 
     void setCelColor(GLfloat color[3]);
 
-    // Draw mapping
+    // Draw cel shading
     virtual void    Draw();
 
     static void     render_callback(void *arg);
