@@ -188,15 +188,13 @@ CelShading::CelShading()
             pgm = NULL;
             failed = true;
         }
-        else
-        {
-            pgm->link();
 
-            // Save uniform locations
-            uint id = pgm->programId();
-            uniforms["cel_color"] = glGetUniformLocation(id, "cel_color");
-            uniforms["lights"] = glGetUniformLocation(id, "lights");
-        }
+        pgm->link();
+
+        // Save uniform locations
+        uint id = pgm->programId();
+        uniforms["cel_color"] = glGetUniformLocation(id, "cel_color");
+        uniforms["lights"] = glGetUniformLocation(id, "lights");
     }
 }
 
@@ -258,13 +256,10 @@ void CelShading::Draw()
     if (!licensed && !tao->blink(1.0, 0.2))
         return;
 
-    uint prg_id = 0;
-    if(pgm)
-        prg_id = pgm->programId();
-
-    if(prg_id)
+    uint id = pgm->programId();
+    if(id)
     {
-        tao->SetShader(prg_id);
+        tao->SetShader(id);
 
         // Set cel color
         glUniform3fv(uniforms["cel_color"], 1, cel);
