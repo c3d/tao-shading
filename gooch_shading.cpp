@@ -193,17 +193,19 @@ GoochShading::GoochShading()
             pgm = NULL;
             failed = true;
         }
+        else
+        {
+            pgm->link();
 
-        pgm->link();
-
-        // Save uniform locations
-        uint id = pgm->programId();
-        uniforms["warm_color"] = glGetUniformLocation(id, "warm_color");
-        uniforms["cool_color"] = glGetUniformLocation(id, "cool_color");
-        uniforms["surface_color"] = glGetUniformLocation(id, "surface_color");
-        uniforms["warm_diffuse"] = glGetUniformLocation(id, "warm_diffuse");
-        uniforms["cool_diffuse"] = glGetUniformLocation(id, "cool_diffuse");
-        uniforms["lights"] = glGetUniformLocation(id, "lights");
+            // Save uniform locations
+            uint id = pgm->programId();
+            uniforms["warm_color"] = glGetUniformLocation(id, "warm_color");
+            uniforms["cool_color"] = glGetUniformLocation(id, "cool_color");
+            uniforms["surface_color"] = glGetUniformLocation(id, "surface_color");
+            uniforms["warm_diffuse"] = glGetUniformLocation(id, "warm_diffuse");
+            uniforms["cool_diffuse"] = glGetUniformLocation(id, "cool_diffuse");
+            uniforms["lights"] = glGetUniformLocation(id, "lights");
+        }
     }
 }
 
@@ -305,10 +307,13 @@ void GoochShading::Draw()
     if (!licensed && !tao->blink(1.0, 0.2))
         return;
 
-    uint id = pgm->programId();
-    if(id)
+    uint prg_id = 0;
+    if(pgm)
+        prg_id = pgm->programId();
+
+    if(prg_id)
     {        
-        tao->SetShader(id);
+        tao->SetShader(prg_id);
 
         // Set gooch colors
         glUniform3fv(uniforms["warm_color"], 1, warm);
