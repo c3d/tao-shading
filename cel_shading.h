@@ -1,4 +1,4 @@
-#ifndef CEL_SHADING_H
+﻿#ifndef CEL_SHADING_H
 #define CEL_SHADING_H
 // ****************************************************************************
 //  cel_shading.h                                                   Tao project
@@ -20,12 +20,19 @@
 // ****************************************************************************
 
 #include "tao/coords3d.h"
-#include "tao/matrix.h"
-#include "shading.h"
+#include "tao/module_api.h"
+#include "tao/tao_gl.h"
 #include <QObject>
 
 using namespace std;
 using namespace Tao;
+
+struct Shading : public QObject
+{
+public :
+    static bool tested, licensed;
+    static const Tao::ModuleApi *tao;
+};
 
 
 struct CelShading : public Shading
@@ -38,17 +45,17 @@ struct CelShading : public Shading
     // Draw cel shading
     virtual void    Draw();
 
-protected:
-    virtual void    createShaders();
+    static void     render_callback(void *arg);
+    static void     identify_callback(void *arg);
+    static void     delete_callback(void *arg);
 
 private:
-    GLfloat cel[3];
+   GLfloat cel[3];
 
-    static bool failed;
-    static QGLShaderProgram* pgm;
-    static std::map<text, GLint> uniforms;
-    static const QGLContext* context;
+   static bool failed;
+   static QGLShaderProgram* pgm;
+   static std::map<text, GLint> uniforms;
 };
 
 
-#endif // CEL_SHADING_H
+#endif
