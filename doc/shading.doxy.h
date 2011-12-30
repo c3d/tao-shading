@@ -9,7 +9,7 @@
  *
  * @image html shading.png "Output of shading.ddd"
  *
- * @endtaomoduledescription{Shading}
+ * @endtaomoduledescription{Animate}
  * @{
  */
 
