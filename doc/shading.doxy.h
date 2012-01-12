@@ -1,6 +1,5 @@
 /**
- * @defgroup Shading Shading
- * @ingroup Modules
+ * @taomoduledescription{Shading, Shading}
  *
  * Apply some shading effects.
  *
@@ -9,6 +8,8 @@
  * @include shading.ddd
  *
  * @image html shading.png "Output of shading.ddd"
+ *
+ * @endtaomoduledescription{Animate}
  * @{
  */
 
