@@ -148,7 +148,7 @@ GoochShading::GoochShading()
                 "   /* Mix colors */"
                 "   vec3 kcool  = min(cool_color + cool_diffuse * surface_color, 1.0);"
                 "   vec3 kwarm  = min(warm_color + warm_diffuse * surface_color, 1.0);"
-                "   vec3 kfinal = mix(kcool, kwarm, diff);"
+                "   vec3 kfinal = mix(kwarm, kcool, diff);"
 
                 "   /* Compute final color */"
                 "   gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);"
@@ -189,7 +189,7 @@ GoochShading::GoochShading()
                 "   /* Mix colors */"
                 "   vec3 kcool  = min(cool_color + cool_diffuse * surface_color, 1.0);"
                 "   vec3 kwarm  = min(warm_color + warm_diffuse * surface_color, 1.0);"
-                "   vec3 kfinal = mix(kcool, kwarm, diff);"
+                "   vec3 kfinal = mix(kwarm, kcool, diff);"
 
                 "   /* Compute final color */"
                 "   gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);"

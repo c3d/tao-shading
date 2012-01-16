@@ -1,7 +1,7 @@
 import Shading 1.0
 import ObjectLoader 1.0
+
 cel ->
-    //Define color for cel shading
     cel_color 0.7, 0.7, 1.0
     cel_shading
     rotatex 25
