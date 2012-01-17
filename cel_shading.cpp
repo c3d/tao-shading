@@ -20,53 +20,10 @@
 // ****************************************************************************
 #include "cel_shading.h"
 
-// ============================================================================
-//
-//    Shading
-//
-// ============================================================================
 bool Shading::tested = false;
 bool Shading::licensed = false;
 
 const Tao::ModuleApi *Shading::tao = NULL;
-
-Shading::Shading(const QGLContext **pcontext)
-// ----------------------------------------------------------------------------
-//   Construction
-// ----------------------------------------------------------------------------
-    : pcontext(pcontext)
-{
-}
-
-
-Shading::~Shading()
-// ----------------------------------------------------------------------------
-//   Destruction
-// ----------------------------------------------------------------------------
-{
-}
-
-
-void Shading::checkGLContext()
-// ----------------------------------------------------------------------------
-//   Re-create context-dependent resources if GL context has changed
-// ----------------------------------------------------------------------------
-{
-    if (*pcontext != QGLContext::currentContext())
-    {
-        createShaders();
-        *pcontext = QGLContext::currentContext();
-    }
-}
-
-
-void Shading::createShaders()
-// ----------------------------------------------------------------------------
-//   Create shader programs for the material
-// ----------------------------------------------------------------------------
-{
-}
-
 
 
 // ============================================================================
@@ -78,102 +35,10 @@ void Shading::createShaders()
 bool                  CelShading::failed = false;
 QGLShaderProgram*     CelShading::pgm = NULL;
 std::map<text, GLint> CelShading::uniforms;
-const QGLContext*     CelShading::context = NULL;
-
 
 CelShading::CelShading()
 // ----------------------------------------------------------------------------
 //   Construction
-// ----------------------------------------------------------------------------
-    : Shading(&context)
-{
-    checkGLContext();
-}
-
-
-CelShading::~CelShading()
-// ----------------------------------------------------------------------------
-//   Destruction
-// ----------------------------------------------------------------------------
-{
-}
-
-
-void CelShading::setCelColor(GLfloat color[3])
-// ----------------------------------------------------------------------------
-//   Set Cel Shading color
-// ----------------------------------------------------------------------------
-{
-    cel[0] = color[0];
-    cel[1] = color[1];
-    cel[2] = color[2];
-}
-
-
-void CelShading::render_callback(void *arg)
-// ----------------------------------------------------------------------------
-//   Rendering callback: call the render function for the object
-// ----------------------------------------------------------------------------
-{
-    ((CelShading *)arg)->Draw();
-}
-
-
-void CelShading::identify_callback(void *)
-// ----------------------------------------------------------------------------
-//   Identify callback: don't do anything
-// ----------------------------------------------------------------------------
-{
-}
-
-
-void CelShading::delete_callback(void *arg)
-// ----------------------------------------------------------------------------
-//   Delete callback: destroy object
-// ----------------------------------------------------------------------------
-{
-    delete (CelShading *)arg;
-}
-
-
-void CelShading::Draw()
-// ----------------------------------------------------------------------------
-//   Apply Cel Shading
-// ----------------------------------------------------------------------------
-{
-    if (!tested)
-    {
-        licensed = tao->checkLicense("Shading 1.0", false);
-        tested = true;
-    }
-    if (!licensed && !tao->blink(1.0, 0.2, 300.0))
-        return;
-
-    checkGLContext();
-
-    uint prg_id = 0;
-    if(pgm)
-        prg_id = pgm->programId();
-
-    if(prg_id)
-    {
-        tao->SetShader(prg_id);
-
-        // Set cel color
-        glUniform3fv(uniforms["cel_color"], 1, cel);
-
-        if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
-        {
-            GLint lightsmask = tao->EnabledLights();
-            glUniform1i(uniforms["lights"], lightsmask);
-        }
-    }
-}
-
-
-void CelShading::createShaders()
-// ----------------------------------------------------------------------------
-//   Create shader programs
 // ----------------------------------------------------------------------------
 {
     if(!pgm && !failed)
@@ -234,7 +99,7 @@ void CelShading::createShaders()
                 "varying vec3 normal;"
                 "varying vec3 viewDir;"
                 "void main()"
-                "{"
+                "{"                    
                 "   /* Define a maximum of lights supported */"
                 "   int MAX_LIGHTS = 8;"
                 "   float diff = 0.0;"
@@ -370,6 +235,83 @@ void CelShading::createShaders()
             uint id = pgm->programId();
             uniforms["cel_color"] = glGetUniformLocation(id, "cel_color");
             uniforms["lights"] = glGetUniformLocation(id, "lights");
+        }
+    }
+}
+
+CelShading::~CelShading()
+// ----------------------------------------------------------------------------
+//   Destruction
+// ----------------------------------------------------------------------------
+{
+}
+
+
+void CelShading::setCelColor(GLfloat color[3])
+// ----------------------------------------------------------------------------
+//   Set Cel Shading color
+// ----------------------------------------------------------------------------
+{
+    cel[0] = color[0];
+    cel[1] = color[1];
+    cel[2] = color[2];
+}
+
+
+void CelShading::render_callback(void *arg)
+// ----------------------------------------------------------------------------
+//   Rendering callback: call the render function for the object
+// ----------------------------------------------------------------------------
+{
+    ((CelShading *)arg)->Draw();
+}
+
+
+void CelShading::identify_callback(void *)
+// ----------------------------------------------------------------------------
+//   Identify callback: don't do anything
+// ----------------------------------------------------------------------------
+{
+}
+
+
+void CelShading::delete_callback(void *arg)
+// ----------------------------------------------------------------------------
+//   Delete callback: destroy object
+// ----------------------------------------------------------------------------
+{
+    delete (CelShading *)arg;
+}
+
+
+void CelShading::Draw()
+// ----------------------------------------------------------------------------
+//   Apply Cel Shading
+// ----------------------------------------------------------------------------
+{
+    if (!tested)
+    {
+        licensed = tao->checkLicense("Shading 1.0", false);
+        tested = true;
+    }
+    if (!licensed && !tao->blink(1.0, 0.2))
+        return;
+
+    uint prg_id = 0;
+    if(pgm)
+        prg_id = pgm->programId();
+
+    if(prg_id)
+    {
+        tao->SetShader(prg_id);
+
+        // Set cel color
+        glUniform3fv(uniforms["cel_color"], 1, cel);
+
+        if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
+        {
+            GLint lightsmask = tao->EnabledLights();
+            glUniform1i(uniforms["lights"], lightsmask);
         }
     }
 }
