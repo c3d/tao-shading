@@ -38,7 +38,7 @@ cel_color(r:real, b:real, g:real);
  *
  *  @note This effect can support a maximum of 8 differents lights.
  * @~french
- * Active l'effet <em>cel shading</em>.
+ * Active l'effet <em>cel shading</em>. Donne un effet cartoon à la scene.
  * Cf. <a href="http://fr.wikipedia.org/wiki/Ombrage_de_cellulo%C3%AFd">Wikipedia</a>.
  */
 cel_shading();
