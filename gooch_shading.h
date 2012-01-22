@@ -46,6 +46,9 @@ struct GoochShading : public Shading
     static void     identify_callback(void *arg);
     static void     delete_callback(void *arg);
 
+protected:
+    virtual void    createShaders();
+
 private:
    // Gooch shading color
    GLfloat warm[3];
@@ -59,6 +62,7 @@ private:
    static bool failed;
    static QGLShaderProgram* pgm;
    static std::map<text, GLint> uniforms;
+   static const QGLContext* context;
 };
 
 
