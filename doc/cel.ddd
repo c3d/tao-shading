@@ -1,11 +1,13 @@
-import Shading 1.0
-import ObjectLoader 1.0
+import Shading
 
-cel ->
-    cel_color 0.7, 0.7, 1.0
-    cel_shading
-    rotatex 25
-    rotatey 10 * page_time
-    object 0, 0, 0, 400, 400, 400, "Dog.obj"
-
-cel
+// Cel shading
+locally
+    color "yellow"
+    sphere mouse_x, mouse_y, 100, 20
+light 0
+light_position mouse_x, mouse_y, 100
+cel_color 0.7, 0.7, 1.0
+cel_shading
+rotatex 140
+ww -> window_width / 2
+torus 0, 0, 0, ww, ww, ww, 50, 50, 0.25
