@@ -2,6 +2,7 @@
  * @~english
  * @taomoduledescription{Shading, Shading}
  * Apply some shading effects which allow to create non-photorealistic rendering (cartoon-style). @n
+ * Following images show the difference between a classic rendering and an other one obtained with shading effects.
  *
  * <em>Classic rendering</em> :
  * @include shading.ddd
