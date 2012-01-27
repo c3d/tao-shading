@@ -30,10 +30,146 @@
 bool                  GoochShading::failed = false;
 QGLShaderProgram*     GoochShading::pgm = NULL;
 std::map<text, GLint> GoochShading::uniforms;
+const QGLContext*     GoochShading::context = NULL;
 
 GoochShading::GoochShading()
 // ----------------------------------------------------------------------------
 //   Construction
+// ----------------------------------------------------------------------------
+    : Shading(&context)
+{
+    checkGLContext();
+}
+
+GoochShading::~GoochShading()
+// ----------------------------------------------------------------------------
+//   Destruction
+// ----------------------------------------------------------------------------
+{
+}
+
+
+void GoochShading::setCoolColor(GLfloat color[3])
+// ----------------------------------------------------------------------------
+//   Set cool color
+// ----------------------------------------------------------------------------
+{
+    warm[0] = color[0];
+    warm[1] = color[1];
+    warm[2] = color[2];
+}
+
+
+void GoochShading::setWarmColor(GLfloat color[3])
+// ----------------------------------------------------------------------------
+//   Set warm color
+// ----------------------------------------------------------------------------
+{
+    cool[0] = color[0];
+    cool[1] = color[1];
+    cool[2] = color[2];
+}
+
+
+void GoochShading::setSurfaceColor(GLfloat color[3])
+// ----------------------------------------------------------------------------
+//   Set surface color
+// ----------------------------------------------------------------------------
+{
+    surface[0] = color[0];
+    surface[1] = color[1];
+    surface[2] = color[2];
+}
+
+
+void GoochShading::setWarmDiffuse(coord d)
+// ----------------------------------------------------------------------------
+//   Set warm diffuse coefficient
+// ----------------------------------------------------------------------------
+{
+    wd = d;
+}
+
+
+void GoochShading::setCoolDiffuse(coord d)
+// ----------------------------------------------------------------------------
+//   Set cool diffuse coefficient
+// ----------------------------------------------------------------------------
+{
+    cd = d;
+}
+
+
+void GoochShading::render_callback(void *arg)
+// ----------------------------------------------------------------------------
+//   Rendering callback: call the render function for the object
+// ----------------------------------------------------------------------------
+{
+    ((GoochShading *)arg)->Draw();
+}
+
+
+void GoochShading::identify_callback(void *)
+// ----------------------------------------------------------------------------
+//   Identify callback: don't do anything
+// ----------------------------------------------------------------------------
+{
+}
+
+
+void GoochShading::delete_callback(void *arg)
+// ----------------------------------------------------------------------------
+//   Delete callback: destroy object
+// ----------------------------------------------------------------------------
+{
+    delete (GoochShading *)arg;
+}
+
+
+void GoochShading::Draw()
+// ----------------------------------------------------------------------------
+//   Apply Gooch Shading
+// ----------------------------------------------------------------------------
+{
+    if (!tested)
+    {
+        licensed = tao->checkLicense("Shading 1.0", false);
+        tested = true;
+    }
+    if (!licensed && !tao->blink(1.0, 0.2, 300.0))
+        return;
+
+    checkGLContext();
+
+    uint prg_id = 0;
+    if(pgm)
+        prg_id = pgm->programId();
+
+    if(prg_id)
+    {        
+        tao->SetShader(prg_id);
+
+        // Set gooch colors
+        glUniform3fv(uniforms["warm_color"], 1, warm);
+        glUniform3fv(uniforms["cool_color"], 1, cool);
+        glUniform3fv(uniforms["surface_color"], 1, surface);
+
+        // Set gooch coeffs
+        glUniform1f(uniforms["warm_diffuse"], wd);
+        glUniform1f(uniforms["cool_diffuse"], cd);
+
+        if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
+        {
+            GLint lightsmask = tao->EnabledLights();
+            glUniform1i(uniforms["lights"], lightsmask);
+        }
+    }
+}
+
+
+void GoochShading::createShaders()
+// ----------------------------------------------------------------------------
+//   Create shader programs
 // ----------------------------------------------------------------------------
 {
     if(!pgm && !failed)
@@ -234,127 +370,3 @@ GoochShading::GoochShading()
         }
     }
 }
-
-GoochShading::~GoochShading()
-// ----------------------------------------------------------------------------
-//   Destruction
-// ----------------------------------------------------------------------------
-{
-}
-
-
-void GoochShading::setCoolColor(GLfloat color[3])
-// ----------------------------------------------------------------------------
-//   Set cool color
-// ----------------------------------------------------------------------------
-{
-    warm[0] = color[0];
-    warm[1] = color[1];
-    warm[2] = color[2];
-}
-
-
-void GoochShading::setWarmColor(GLfloat color[3])
-// ----------------------------------------------------------------------------
-//   Set warm color
-// ----------------------------------------------------------------------------
-{
-    cool[0] = color[0];
-    cool[1] = color[1];
-    cool[2] = color[2];
-}
-
-
-void GoochShading::setSurfaceColor(GLfloat color[3])
-// ----------------------------------------------------------------------------
-//   Set surface color
-// ----------------------------------------------------------------------------
-{
-    surface[0] = color[0];
-    surface[1] = color[1];
-    surface[2] = color[2];
-}
-
-
-void GoochShading::setWarmDiffuse(coord d)
-// ----------------------------------------------------------------------------
-//   Set warm diffuse coefficient
-// ----------------------------------------------------------------------------
-{
-    wd = d;
-}
-
-
-void GoochShading::setCoolDiffuse(coord d)
-// ----------------------------------------------------------------------------
-//   Set cool diffuse coefficient
-// ----------------------------------------------------------------------------
-{
-    cd = d;
-}
-
-
-void GoochShading::render_callback(void *arg)
-// ----------------------------------------------------------------------------
-//   Rendering callback: call the render function for the object
-// ----------------------------------------------------------------------------
-{
-    ((GoochShading *)arg)->Draw();
-}
-
-
-void GoochShading::identify_callback(void *)
-// ----------------------------------------------------------------------------
-//   Identify callback: don't do anything
-// ----------------------------------------------------------------------------
-{
-}
-
-
-void GoochShading::delete_callback(void *arg)
-// ----------------------------------------------------------------------------
-//   Delete callback: destroy object
-// ----------------------------------------------------------------------------
-{
-    delete (GoochShading *)arg;
-}
-
-
-void GoochShading::Draw()
-// ----------------------------------------------------------------------------
-//   Apply Gooch Shading
-// ----------------------------------------------------------------------------
-{
-    if (!tested)
-    {
-        licensed = tao->checkLicense("Shading 1.0", false);
-        tested = true;
-    }
-    if (!licensed && !tao->blink(1.0, 0.2, 300.0))
-        return;
-
-    uint prg_id = 0;
-    if(pgm)
-        prg_id = pgm->programId();
-
-    if(prg_id)
-    {        
-        tao->SetShader(prg_id);
-
-        // Set gooch colors
-        glUniform3fv(uniforms["warm_color"], 1, warm);
-        glUniform3fv(uniforms["cool_color"], 1, cool);
-        glUniform3fv(uniforms["surface_color"], 1, surface);
-
-        // Set gooch coeffs
-        glUniform1f(uniforms["warm_diffuse"], wd);
-        glUniform1f(uniforms["cool_diffuse"], cd);
-
-        if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
-        {
-            GLint lightsmask = tao->EnabledLights();
-            glUniform1i(uniforms["lights"], lightsmask);
-        }
-    }
-}
-

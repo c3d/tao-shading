@@ -29,6 +29,16 @@ using namespace Tao;
 
 struct Shading : public QObject
 {
+    Shading(const QGLContext **pcontext);
+    ~Shading();
+
+    // Re-create shaders if GL context has changed
+    void            checkGLContext();
+    virtual void    createShaders();
+
+public:
+    const QGLContext    **pcontext;
+
 public :
     static bool tested, licensed;
     static const Tao::ModuleApi *tao;
@@ -44,10 +54,12 @@ struct CelShading : public Shading
 
     // Draw cel shading
     virtual void    Draw();
-
     static void     render_callback(void *arg);
     static void     identify_callback(void *arg);
     static void     delete_callback(void *arg);
+
+protected:
+    virtual void    createShaders();
 
 private:
    GLfloat cel[3];
@@ -55,6 +67,7 @@ private:
    static bool failed;
    static QGLShaderProgram* pgm;
    static std::map<text, GLint> uniforms;
+   static const QGLContext* context;
 };
 
 
