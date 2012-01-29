@@ -1,10 +1,17 @@
-// Classic rendering
+import Shading
+
+// Gooch shading
 locally
     color "yellow"
     sphere mouse_x, mouse_y, 100, 20
 light 0
 light_position mouse_x, mouse_y, 100
-color 0.7, 0.7, 1.0, 1.0
+cool_color 0, 0.2, 0.3
+cool_diffuse 0.045
+warm_color 0.3, 0, 0
+warm_diffuse 0.45
+surface_color 0, 0, 0
+gooch_shading
 rotatex 140
 ww -> window_width / 2
 torus 0, 0, 0, ww, ww, ww, 50, 50, 0.25
