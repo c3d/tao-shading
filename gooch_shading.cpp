@@ -133,7 +133,7 @@ void GoochShading::Draw()
 {
     if (!tested)
     {
-        licensed = tao->checkImpressOrLicense("Shading 1.001");
+        licensed = tao->checkLicense("Shading 1.0", false);
         tested = true;
     }
     if (!licensed && !tao->blink(1.0, 0.2, 300.0))
