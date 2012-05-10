@@ -18,13 +18,15 @@ DEFINES     += GLEW_STATIC
 
 INCLUDEPATH += $${TAOTOPSRC}/tao/include/tao/
 HEADERS = \
-          shading.h \
-          cel_shading.h \
-          gooch_shading.h \
+    shading.h \
+    shading_factory.h \
+    cel_shading.h \
+    gooch_shading.h
 
 SOURCES = shading.cpp $${TAOTOPSRC}/tao/include/tao/GL/glew.c \
-          cel_shading.cpp \
-          gooch_shading.cpp \
+    shading_factory.cpp \
+    cel_shading.cpp \
+    gooch_shading.cpp
 
 TBL_SOURCES  = shading.tbl
 
@@ -42,3 +44,7 @@ QMAKE_SUBSTITUTES = doc/Doxyfile.in
 DOXYFILE = doc/Doxyfile
 DOXYLANG = en,fr
 include(../modules_doc.pri)
+
+
+
+
