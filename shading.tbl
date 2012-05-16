@@ -19,7 +19,7 @@
 //  (C) 2011 Baptiste Soulisse <baptiste.soulisse@taodyne.com>
 //  (C) 2011 Taodyne SAS
 // ****************************************************************************
-#include "shading.h"
+#include "shading_factory.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 //   CEL SHADING
@@ -40,6 +40,7 @@ PREFIX(CelShading,  tree, "cel_shading",,
        SYNOPSIS("Apply cel shading")
        DESCRIPTION("Apply cel shading (or toon shading). "
                    "For further informations, see http://en.wikipedia.org/wiki/Cel-shaded_animation"))
+
 
 // -------------------------------------------------------------------------------------------------------------------
 //   GOOCH SHADING
@@ -95,5 +96,3 @@ PREFIX(GoochShading,  tree, "gooch_shading",,
                    " between these define by surface_color, cool_color and warm_color."
                    " Mixing coefficients are defined by diffuse_warm and diffuse_cool."
                    " For further informations, see http://www.yaldex.com/open-gl/ch18lev1sec2.html"))
-
-
