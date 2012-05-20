@@ -4,7 +4,7 @@
 //
 //   File Description:
 //
-//   Gooch shading implementation.
+//   Gooch Shading implementation.
 //
 //
 //
@@ -20,9 +20,10 @@
 // ****************************************************************************
 #include "gooch_shading.h"
 
+
 // ============================================================================
 //
-//   Gooch shading
+//    Gooch Shading
 //
 // ============================================================================
 
@@ -37,12 +38,8 @@ GoochShading::GoochShading()
 // ----------------------------------------------------------------------------
     : Shading(&context)
 {
-    IFTRACE(shading)
-            debug() << "Create gooch shading" << "\n";
-
     checkGLContext();
 }
-
 
 GoochShading::~GoochShading()
 // ----------------------------------------------------------------------------
@@ -103,18 +100,43 @@ void GoochShading::setCoolDiffuse(coord d)
 }
 
 
+void GoochShading::render_callback(void *arg)
+// ----------------------------------------------------------------------------
+//   Rendering callback: call the render function for the object
+// ----------------------------------------------------------------------------
+{
+    ((GoochShading *)arg)->Draw();
+}
+
+
+void GoochShading::identify_callback(void *)
+// ----------------------------------------------------------------------------
+//   Identify callback: don't do anything
+// ----------------------------------------------------------------------------
+{
+}
+
+
+void GoochShading::delete_callback(void *arg)
+// ----------------------------------------------------------------------------
+//   Delete callback: destroy object
+// ----------------------------------------------------------------------------
+{
+    delete (GoochShading *)arg;
+}
+
+
 void GoochShading::Draw()
 // ----------------------------------------------------------------------------
-//   Apply gooch shading
+//   Apply Gooch Shading
 // ----------------------------------------------------------------------------
 {
     if (!tested)
     {
-        licensed = tao->checkImpressOrLicense("Shading 1.0");
+        licensed = tao->checkImpressOrLicense("Shading 1.001");
         tested = true;
     }
-
-    if (!licensed && !tao->blink(1.0, 1.0, 300.0))
+    if (!licensed && !tao->blink(1.0, 0.2, 300.0))
         return;
 
     checkGLContext();
@@ -124,11 +146,7 @@ void GoochShading::Draw()
         prg_id = pgm->programId();
 
     if(prg_id)
-    {
-        IFTRACE(shading)
-                debug() << "Apply gooch shading" << "\n";
-
-        // Set shader
+    {        
         tao->SetShader(prg_id);
 
         // Set gooch colors
@@ -154,14 +172,9 @@ void GoochShading::createShaders()
 //   Create shader programs
 // ----------------------------------------------------------------------------
 {
-    if(!failed)
+    if(!pgm && !failed)
     {
-        IFTRACE(shading)
-                debug() << "Create shader for gooch shading" << "\n";
-
-        delete pgm;
-
-        pgm = new QGLShaderProgram(*pcontext);
+        pgm = new QGLShaderProgram();
         bool ok = false;
 
         // Basic vertex shader
@@ -196,127 +209,127 @@ void GoochShading::createShaders()
             // If the extension is available, use this shader
             // to handle multiple lights
             fSrc =
-                    "/********************************************************************************\n"
-                    "**                                                                               \n"
-                    "** Copyright (C) 2011 Taodyne.                                                   \n"
-                    "** All rights reserved.                                                          \n"
-                    "** Contact: Taodyne (contact@taodyne.com)                                        \n"
-                    "**                                                                               \n"
-                    "** This file is part of the Tao Presentations application, developped by Taodyne.\n"
-                    "** It can be only used in the software and these modules.                        \n"
-                    "**                                                                               \n"
-                    "** If you have questions regarding the use of this file, please contact          \n"
-                    "** Taodyne at contact@taodyne.com.                                               \n"
-                    "**                                                                               \n"
-                    "********************************************************************************/\n"
-                    "#extension GL_EXT_gpu_shader4 : require\n"
+                "/********************************************************************************\n"
+                "**                                                                               \n"
+                "** Copyright (C) 2011 Taodyne.                                                   \n"
+                "** All rights reserved.                                                          \n"
+                "** Contact: Taodyne (contact@taodyne.com)                                        \n"
+                "**                                                                               \n"
+                "** This file is part of the Tao Presentations application, developped by Taodyne.\n"
+                "** It can be only used in the software and these modules.                        \n"
+                "**                                                                               \n"
+                "** If you have questions regarding the use of this file, please contact          \n"
+                "** Taodyne at contact@taodyne.com.                                               \n"
+                "**                                                                               \n"
+                "********************************************************************************/\n"
+                "#extension GL_EXT_gpu_shader4 : require\n"
 
-                    "uniform float warm_diffuse;"
-                    "uniform float cool_diffuse;"
+                "uniform float warm_diffuse;"
+                "uniform float cool_diffuse;"
 
-                    "uniform vec3 warm_color;"
-                    "uniform vec3 cool_color;"
-                    "uniform vec3 surface_color;"
+                "uniform vec3 warm_color;"
+                "uniform vec3 cool_color;"
+                "uniform vec3 surface_color;"
 
-                    "uniform int  lights;"
+                "uniform int  lights;"
 
-                    "varying vec3 normal;"
-                    "varying vec3 viewDir;"
-                    "void main()"
-                    "{"
-                    "   /* Define a maximum of lights supported */"
-                    "   int MAX_LIGHTS = 8;"
-                    "   float diff = 0.0;"
-                    "   float spec = 0.0;"
+                "varying vec3 normal;"
+                "varying vec3 viewDir;"
+                "void main()"
+                "{"
+                "   /* Define a maximum of lights supported */"
+                "   int MAX_LIGHTS = 8;"
+                "   float diff = 0.0;"
+                "   float spec = 0.0;"
 
-                    "   if(lights == 0)"
-                    "   {"
-                    "       vec3 lightDir   = normalize(gl_LightSource[0].position.xyz - viewDir);"
-                    "       vec3 reflectVec = normalize(reflect( -lightDir, normal ));"
+                "   if(lights == 0)"
+                "   {"
+                "       vec3 lightDir   = normalize(gl_LightSource[0].position.xyz - viewDir);"
+                "       vec3 reflectVec = normalize(reflect( -lightDir, normal ));"
 
-                    "       /* Diffuse intensity */"
-                    "       diff = max(dot(normal,lightDir), 0.0);"
+                "       /* Diffuse intensity */"
+                "       diff = max(dot(normal,lightDir), 0.0);"
 
-                    "       /* Specular intensity */"
-                    "       if (diff > 0.0)"
-                    "       {"
-                    "          spec = max(dot(reflectVec, -viewDir), 0.0);"
-                    "          spec = pow(spec, 32.0);"
-                    "       }"
-                    "   }"
-                    "   else"
-                    "   {"
-                    "       for(int i = 0; i < MAX_LIGHTS; i++)"
-                    "       {"
-                    "           if(bool(lights & (1 << i)))"
-                    "           {"
-                    "               vec3 lightDir   = normalize(gl_LightSource[i].position.xyz - viewDir);"
-                    "               vec3 reflectVec = normalize(reflect( -lightDir, normal ));"
+                "       /* Specular intensity */"
+                "       if (diff > 0.0)"
+                "       {"
+                "          spec = max(dot(reflectVec, -viewDir), 0.0);"
+                "          spec = pow(spec, 32.0);"
+                "       }"
+                "   }"
+                "   else"
+                "   {"
+                "       for(int i = 0; i < MAX_LIGHTS; i++)"
+                "       {"
+                "           if(bool(lights & (1 << i)))"
+                "           {"
+                "               vec3 lightDir   = normalize(gl_LightSource[i].position.xyz - viewDir);"
+                "               vec3 reflectVec = normalize(reflect( -lightDir, normal ));"
 
-                    "               /* Diffuse intensity */"
-                    "               float diffTmp = max(dot(normal,lightDir), 0.0);"
+                "               /* Diffuse intensity */"
+                "               float diffTmp = max(dot(normal,lightDir), 0.0);"
 
-                    "               /* Specular intensity */"
-                    "               if (diffTmp > 0.0)"
-                    "               {"
-                    "                  float specTmp = max(dot(reflectVec, -viewDir), 0.0);"
-                    "                  spec += pow(specTmp, 32.0);"
-                    "               }"
+                "               /* Specular intensity */"
+                "               if (diffTmp > 0.0)"
+                "               {"
+                "                  float specTmp = max(dot(reflectVec, -viewDir), 0.0);"
+                "                  spec += pow(specTmp, 32.0);"
+                "               }"
 
-                    "               diff += diffTmp;"
-                    "           }"
-                    "       }"
-                    "   }"
+                "               diff += diffTmp;"
+                "           }"
+                "       }"
+                "   }"
 
-                    "   /* Mix colors */"
-                    "   vec3 kcool  = min(cool_color + cool_diffuse * surface_color, 1.0);"
-                    "   vec3 kwarm  = min(warm_color + warm_diffuse * surface_color, 1.0);"
-                    "   vec3 kfinal = mix(kwarm, kcool, diff);"
+                "   /* Mix colors */"
+                "   vec3 kcool  = min(cool_color + cool_diffuse * surface_color, 1.0);"
+                "   vec3 kwarm  = min(warm_color + warm_diffuse * surface_color, 1.0);"
+                "   vec3 kfinal = mix(kwarm, kcool, diff);"
 
-                    "   /* Compute final color */"
-                    "   gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);"
-                    "}";
+                "   /* Compute final color */"
+                "   gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);"
+                "}";
         }
         else
         {
             // If the extension is not available, use this shader
             // to handle an unique light
             fSrc =
-                    "uniform float warm_diffuse;"
-                    "uniform float cool_diffuse;"
+                "uniform float warm_diffuse;"
+                "uniform float cool_diffuse;"
 
-                    "uniform vec3 warm_color;"
-                    "uniform vec3 cool_color;"
-                    "uniform vec3 surface_color;"
+                "uniform vec3 warm_color;"
+                "uniform vec3 cool_color;"
+                "uniform vec3 surface_color;"
 
-                    "varying vec3 normal;"
-                    "varying vec3 viewDir;"
-                    "void main()"
-                    "{"
-                    "   float diff = 0.0;"
-                    "   float spec = 0.0;"
+                "varying vec3 normal;"
+                "varying vec3 viewDir;"
+                "void main()"
+                "{"
+                "   float diff = 0.0;"
+                "   float spec = 0.0;"
 
-                    "   vec3 lightDir   = normalize(gl_LightSource[0].position.xyz - viewDir);"
-                    "   vec3 reflectVec = normalize(reflect( -lightDir, normal ));"
+                "   vec3 lightDir   = normalize(gl_LightSource[0].position.xyz - viewDir);"
+                "   vec3 reflectVec = normalize(reflect( -lightDir, normal ));"
 
-                    "   /* Diffuse intensity */"
-                    "   diff = max(dot(normal,lightDir), 0.0);"
+                "   /* Diffuse intensity */"
+                "   diff = max(dot(normal,lightDir), 0.0);"
 
-                    "   /* Specular intensity */"
-                    "   if (diff > 0.0)"
-                    "   {"
-                    "      spec = max(dot(reflectVec, -viewDir), 0.0);"
-                    "      spec = pow(spec, 32.0);"
-                    "   }"
+                "   /* Specular intensity */"
+                "   if (diff > 0.0)"
+                "   {"
+                "      spec = max(dot(reflectVec, -viewDir), 0.0);"
+                "      spec = pow(spec, 32.0);"
+                "   }"
 
-                    "   /* Mix colors */"
-                    "   vec3 kcool  = min(cool_color + cool_diffuse * surface_color, 1.0);"
-                    "   vec3 kwarm  = min(warm_color + warm_diffuse * surface_color, 1.0);"
-                    "   vec3 kfinal = mix(kwarm, kcool, diff);"
+                "   /* Mix colors */"
+                "   vec3 kcool  = min(cool_color + cool_diffuse * surface_color, 1.0);"
+                "   vec3 kwarm  = min(warm_color + warm_diffuse * surface_color, 1.0);"
+                "   vec3 kfinal = mix(kwarm, kcool, diff);"
 
-                    "   /* Compute final color */"
-                    "   gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);"
-                    "}";
+                "   /* Compute final color */"
+                "   gl_FragColor = vec4(min(kfinal + spec, 1.0), 1.0);"
+                "}";
         }
 
         if (pgm->addShaderFromSourceCode(QGLShader::Vertex, vSrc.c_str()))
