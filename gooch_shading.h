@@ -1,4 +1,4 @@
-﻿#ifndef GOOCH_SHADING_H
+#ifndef GOOCH_SHADING_H
 #define GOOCH_SHADING_H
 // ****************************************************************************
 //  gooch_shading.h                                                 Tao project
@@ -20,17 +20,18 @@
 // ****************************************************************************
 
 #include "tao/coords3d.h"
-#include "tao/module_api.h"
-#include "tao/tao_gl.h"
-#include "cel_shading.h"
+#include "tao/matrix.h"
+#include "shading.h"
+#include <QObject>
 
 using namespace std;
 using namespace Tao;
 
-struct GoochShading : public Shading
+
+struct GoochShading  : public Shading
 {
-    GoochShading();
-    ~GoochShading();
+    GoochShading ();
+    ~GoochShading ();
 
     void setWarmColor(GLfloat color[3]);
     void setCoolColor(GLfloat color[3]);
@@ -42,28 +43,24 @@ struct GoochShading : public Shading
     // Draw gooch shading
     virtual void    Draw();
 
-    static void     render_callback(void *arg);
-    static void     identify_callback(void *arg);
-    static void     delete_callback(void *arg);
-
 protected:
     virtual void    createShaders();
 
 private:
-   // Gooch shading color
-   GLfloat warm[3];
-   GLfloat cool[3]; //
-   GLfloat surface[3];
+    // Gooch shading color
+    GLfloat warm[3];
+    GLfloat cool[3]; //
+    GLfloat surface[3];
 
-   // Gooch shading coeffs
-   GLfloat wd;
-   GLfloat cd;
+    // Gooch shading coeffs
+    GLfloat wd;
+    GLfloat cd;
 
-   static bool failed;
-   static QGLShaderProgram* pgm;
-   static std::map<text, GLint> uniforms;
-   static const QGLContext* context;
+    static bool failed;
+    static QGLShaderProgram* pgm;
+    static std::map<text, GLint> uniforms;
+    static const QGLContext* context;
 };
 
 
-#endif
+#endif // GOOCH_SHADING_H
