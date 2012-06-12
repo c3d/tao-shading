@@ -6,8 +6,7 @@
 //
 //   File Description:
 //
-//    Prototype of the function used by shading.tbl to
-//    implement the new XL primitive
+//    Define a shading effect.
 //
 //
 //
@@ -22,32 +21,40 @@
 //  (C) 2011 Baptiste Soulisse <baptiste.soulisse@taodyne.com>
 //  (C) 2011 Taodyne SAS
 // ****************************************************************************
-#include "tree.h"
-#include "main.h"
-#include "runtime.h"
-#include "base.h"
 #include "tao/module_api.h"
-#include "cel_shading.h"
-#include "gooch_shading.h"
+#include "tao/tao_gl.h"
+#include <QObject>
 
-using namespace XL;
+using namespace std;
+using namespace Tao;
 
-// -------------------------------------------------------------------------------------------------------------------
-//   CEL SHADING
-// -------------------------------------------------------------------------------------------------------------------
+struct Shading : public QObject
+{
+    Shading(const QGLContext **pcontext = NULL);
+    ~Shading();
 
-Tree_p cel_color(Tree_p, Real_p r, Real_p g, Real_p b);
-Tree_p cel_shading(Tree_p);
+    // Draw shading
+    virtual void    Draw();
 
-// -------------------------------------------------------------------------------------------------------------------
-//   GOOCH SHADING
-// -------------------------------------------------------------------------------------------------------------------
+    // Re-create shaders if GL context has changed
+    void            checkGLContext();
+    virtual void    createShaders();
 
-Tree_p warm_diffuse(Tree_p, Real_p r);
-Tree_p cool_diffuse(Tree_p, Real_p r);
-Tree_p warm_color(Tree_p, Real_p r, Real_p g, Real_p b);
-Tree_p cool_color(Tree_p, Real_p r, Real_p g, Real_p b);
-Tree_p surface_color(Tree_p, Real_p r, Real_p g, Real_p b);
-Tree_p gooch_shading(Tree_p);
+    std::ostream &  debug();
+
+    static void     render_callback(void *arg);
+    static void     identify_callback(void *arg);
+    static void     delete_callback(void *arg);
+
+public:
+    const QGLContext    **pcontext;
+
+public:
+    static bool tested, licensed;
+
+    // Pointer to Tao functions
+    static const Tao::ModuleApi *tao;
+};
+
 
 #endif
