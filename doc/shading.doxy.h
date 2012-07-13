@@ -72,8 +72,6 @@ cel_shading();
  *
  * Its default value is 0.45.
  *
- * @see warm_color, gooch_shading
- *
  * @~french
  * Définit le coefficient de couleur chaude pour l'effet
  * <em>Gooch shading</em>.
@@ -94,8 +92,6 @@ warm_diffuse(w:real);
  *
  * Its default value is 0.045.
  *
- * @see cool_color, gooch_shading
- *
  * @~french
  * Définit le coefficient de couleur froide pour l'effet
  * <em>Gooch shading</em>.
@@ -115,8 +111,6 @@ cool_diffuse(c:real);
  * This color is used for <em>Gooch shading</em> effect.
  * Warm color indicates surfaces facing toward the light source.
  *
- * @see warm_diffuse, gooch_shading
- *
  * @~french
  * Définit la couleur chaude pour l'effet <em>Gooch shading</em>.
  * La couleur chaude met en évidence les surfaces qui font face à la source
@@ -133,8 +127,6 @@ warm_color(r:real, b:real, g:real);
  * This color is used for <em>Gooch shading</em> effect.
  * Cool color indicates surfaces that are angled away from the light source.
  *
- * @see cool_diffuse, gooch_shading
- *
  * @~french
  * Définit la couleur froide pour l'effet <em>Gooch shading</em>.
  * La couleur froide met en évidence les surfaces qui ne font pas face
@@ -149,8 +141,6 @@ cool_color(r:real, b:real, g:real);
  * @~english
  * Define surface color by its r, g, b values.
  * This color is used for the <em>Gooch shading</em> effect.
- *
- * @see gooch_shading
  *
  * @~french
  * Définit la couleur de surface de l'effet <em>Gooch shading</em>.
