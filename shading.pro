@@ -14,8 +14,6 @@ MODINSTDIR = shading
 
 include(../modules.pri)
 
-DEFINES     += GLEW_STATIC
-
 INCLUDEPATH += $${TAOTOPSRC}/tao/include/tao/
 HEADERS = \
     shading.h \
@@ -23,10 +21,16 @@ HEADERS = \
     cel_shading.h \
     gooch_shading.h
 
-SOURCES = shading.cpp $${TAOTOPSRC}/tao/include/tao/GL/glew.c \
+SOURCES = shading.cpp \
     shading_factory.cpp \
     cel_shading.cpp \
     gooch_shading.cpp
+
+win32 {
+  DEFINES     += GLEW_STATIC
+  SOURCES     += $${TAOTOPSRC}/tao/include/tao/GL/glew.c
+}
+
 
 TBL_SOURCES  = shading.tbl
 
