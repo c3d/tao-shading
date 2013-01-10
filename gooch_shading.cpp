@@ -110,7 +110,7 @@ void GoochShading::Draw()
 {
     if (!tested)
     {
-        licensed = tao->checkImpressOrLicense("Shading 1.005");
+        licensed = tao->checkImpressOrLicense("Shading 1.004");
         tested = true;
     }
 
