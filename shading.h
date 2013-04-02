@@ -22,6 +22,7 @@
 //  (C) 2011 Taodyne SAS
 // ****************************************************************************
 #include "tao/module_api.h"
+#include "tao/graphic_state.h"
 #include "tao/tao_gl.h"
 #include <QObject>
 

@@ -31,6 +31,8 @@ QGLShaderProgram*     GoochShading::pgm = NULL;
 std::map<text, GLint> GoochShading::uniforms;
 const QGLContext*     GoochShading::context = NULL;
 
+#define GL (*graphic_state)
+
 GoochShading::GoochShading()
 // ----------------------------------------------------------------------------
 //   Construction
@@ -129,18 +131,18 @@ void GoochShading::Draw()
         tao->SetShader(prg_id);
 
         // Set gooch colors
-        glUniform3fv(uniforms["warm_color"], 1, warm);
-        glUniform3fv(uniforms["cool_color"], 1, cool);
-        glUniform3fv(uniforms["surface_color"], 1, surface);
+        GL.Uniform3fv(uniforms["warm_color"], 1, warm);
+        GL.Uniform3fv(uniforms["cool_color"], 1, cool);
+        GL.Uniform3fv(uniforms["surface_color"], 1, surface);
 
         // Set gooch coeffs
-        glUniform1f(uniforms["warm_diffuse"], wd);
-        glUniform1f(uniforms["cool_diffuse"], cd);
+        GL.Uniform(uniforms["warm_diffuse"], wd);
+        GL.Uniform(uniforms["cool_diffuse"], cd);
 
         if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
         {
             GLint lightsmask = tao->EnabledLights();
-            glUniform1i(uniforms["lights"], lightsmask);
+            GL.Uniform(uniforms["lights"], lightsmask);
         }
     }
 }
