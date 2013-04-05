@@ -23,6 +23,12 @@
 
 const Tao::ModuleApi *Shading::tao = NULL;
 
+bool Shading::tested = false;
+bool Shading::licensed = false;
+
+DLL_PUBLIC Tao::GraphicState * graphic_state = NULL;
+
+
 // ============================================================================
 //
 //    Shading
