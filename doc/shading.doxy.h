@@ -1,8 +1,7 @@
 ﻿/**
  * @~english
  * @taomoduledescription{Shading, Shading}
- * <tt>import Shading</tt> - Apply some shading effects which allow to create non-photorealistic rendering (cartoon-style).@n
- *
+ * <tt>import Shading</tt> - Apply some shading effects which allow to create non-photorealistic rendering (cartoon-style). @n
  * Following images show the difference between a classic rendering and an other one obtained with shading effects.
  *
  * <em>Classic rendering</em> :
@@ -11,8 +10,7 @@
  *
  * @~french
  * @taomoduledescription{Shading, Effets Shading}
- * <tt>import Shading</tt> - Applique des effets de type <em>shading</em> (ombrage) qui permettent de réaliser des rendus graphiques non-photoréalistes (style cartoon).@n
- *
+ * <tt>import Shading</tt> - Applique des effets de type <em>shading</em> (ombrage) qui permettent de réaliser des rendus graphiques non-photoréalistes (style cartoon).
  * Les images suivantes présentent la différence entre le rendu classique et le rendu obtenu avec ces effets de shading. @n
  *
  * <em>Rendu classique</em> :

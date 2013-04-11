@@ -11,21 +11,8 @@ module_description
     description "A module that allows to add some shading effects to a scene"
     author "Taodyne SAS"
     website "http://www.taodyne.com"
-    version 1.007
+    version 1.005
 
 module_description "fr",
     name "Ombrage"
     description "Permet d'ajouter des effets d'ombrages non-photoréalistes dans une scène."
-
-// The following lines define redirections
-// towards main shading functions
-// avoiding a bug in tbl files with
-// functions without arguments.
-
-cel_shading ->
-    // Apply basic cel shading
-    cel_shading 0.0
-
-gooch_shading ->
-    // Apply basic Gooch shading
-    gooch_shading 0.0

@@ -35,9 +35,8 @@ PREFIX(CelColor,  tree, "cel_color",
        SYNOPSIS("Set cel shading color.")
        DESCRIPTION("Set cel shading color."))
 
-PREFIX(CelShading,  tree, "cel_shading",
-       PARM(a, real, ),
-       return cel_shading(self, a),
+PREFIX(CelShading,  tree, "cel_shading",,
+       return cel_shading(self),
        GROUP(module.Shading)
        SYNOPSIS("Apply cel shading")
        DESCRIPTION("Apply cel shading (or toon shading). "
@@ -89,9 +88,8 @@ PREFIX(SurfaceColor,  tree, "surface_color",
        SYNOPSIS("Define surface color for gooch shading.")
        DESCRIPTION("Define surface color for gooch shading."))
 
-PREFIX(GoochShading,  tree, "gooch_shading",
-       PARM(a, real, ),
-       return gooch_shading(self, a),
+PREFIX(GoochShading,  tree, "gooch_shading",,
+       return gooch_shading(self),
        GROUP(module.Shading)
        SYNOPSIS("Apply gooch shading")
        DESCRIPTION(" Apply gooch shading on current scene."
