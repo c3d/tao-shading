@@ -51,7 +51,7 @@ Tree_p cel_color(Tree_p, Real_p r, Real_p g, Real_p b)
 }
 
 
-Tree_p cel_shading(Tree_p, float)
+Tree_p cel_shading(Tree_p)
 // ----------------------------------------------------------------------------
 //   Define cel shading
 // ----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ Tree_p surface_color(Tree_p, Real_p r, Real_p g, Real_p b)
 }
 
 
-Tree_p gooch_shading(Tree_p, float)
+Tree_p gooch_shading(Tree_p)
 // ----------------------------------------------------------------------------
 //   Define gooch shading
 // ----------------------------------------------------------------------------
