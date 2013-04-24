@@ -70,7 +70,7 @@ void CelShading::Draw()
 {
     if (!tested)
     {
-        licensed = tao->checkImpressOrLicense("Shading 1.006");
+        licensed = tao->checkImpressOrLicense("Shading 1.005");
         tested = true;
     }
 
