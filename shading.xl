@@ -23,9 +23,11 @@ module_description "fr",
 // functions without arguments.
 
 cel_shading ->
-    // Apply basic cel shading
+    /**
+    * Apply basic cel shading
     cel_shading 0.0
 
 gooch_shading ->
-    // Apply basic Gooch shading
+    /**
+    * Apply basic cel shading
     gooch_shading 0.0
