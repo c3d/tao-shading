@@ -108,12 +108,6 @@ void GoochShading::Draw()
 //   Apply gooch shading
 // ----------------------------------------------------------------------------
 {
-    if (!tested)
-    {
-        licensed = tao->checkImpressOrLicense("Shading 1.005");
-        tested = true;
-    }
-
     checkGLContext();
 
     uint prg_id = 0;
