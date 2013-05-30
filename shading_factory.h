@@ -38,7 +38,7 @@ using namespace XL;
 // -------------------------------------------------------------------------------------------------------------------
 
 Tree_p cel_color(Tree_p, Real_p r, Real_p g, Real_p b);
-Tree_p cel_shading(Tree_p);
+Tree_p cel_shading(Tree_p, float);
 
 // -------------------------------------------------------------------------------------------------------------------
 //   GOOCH SHADING
@@ -49,6 +49,6 @@ Tree_p cool_diffuse(Tree_p, Real_p r);
 Tree_p warm_color(Tree_p, Real_p r, Real_p g, Real_p b);
 Tree_p cool_color(Tree_p, Real_p r, Real_p g, Real_p b);
 Tree_p surface_color(Tree_p, Real_p r, Real_p g, Real_p b);
-Tree_p gooch_shading(Tree_p);
+Tree_p gooch_shading(Tree_p, float);
 
 #endif // SHADING_FACTORY_H
