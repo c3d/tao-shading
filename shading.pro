@@ -41,9 +41,6 @@ QT          += core \
 
 INSTALLS    += thismod_icon
 
-LICENSE_FILES = shading.taokey.notsigned
-include(../licenses.pri)
-
 QMAKE_SUBSTITUTES = doc/Doxyfile.in
 DOXYFILE = doc/Doxyfile
 DOXYLANG = en,fr
