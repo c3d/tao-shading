@@ -70,12 +70,6 @@ void CelShading::Draw()
 //   Apply cel shading
 // ----------------------------------------------------------------------------
 {
-    if (!tested)
-    {
-        licensed = tao->checkImpressOrLicense("Shading 1.006");
-        tested = true;
-    }
-
     checkGLContext();
 
     uint prg_id = 0;
