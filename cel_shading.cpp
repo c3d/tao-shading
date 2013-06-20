@@ -31,8 +31,6 @@ QGLShaderProgram*     CelShading::pgm = NULL;
 std::map<text, GLint> CelShading::uniforms;
 const QGLContext*     CelShading::context = NULL;
 
-#define GL (*graphic_state)
-
 CelShading::CelShading()
 // ----------------------------------------------------------------------------
 //   Construction
@@ -85,12 +83,12 @@ void CelShading::Draw()
         tao->SetShader(prg_id);
 
         // Set cel color
-        GL.Uniform3fv(uniforms["cel_color"], 1, cel);
+        glUniform3fv(uniforms["cel_color"], 1, cel);
 
         if(tao->isGLExtensionAvailable("GL_EXT_gpu_shader4"))
         {
-            GLint lightsmask =  GL.LightsMask();
-            GL.Uniform(uniforms["lights"], lightsmask);
+            GLint lightsmask = tao->EnabledLights();
+            glUniform1i(uniforms["lights"], lightsmask);
         }
     }
 }
