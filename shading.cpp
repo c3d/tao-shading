@@ -23,6 +23,10 @@
 
 const Tao::ModuleApi *Shading::tao = NULL;
 
+
+DLL_PUBLIC Tao::GraphicState * graphic_state = NULL;
+
+
 // ============================================================================
 //
 //    Shading
