@@ -25,11 +25,13 @@
 #include "tao/graphic_state.h"
 #include "tao/tao_gl.h"
 #include <QObject>
+#include <QGLContext>
+#include <QGLShaderProgram>
 
 using namespace std;
 using namespace Tao;
 
-struct Shading : public QObject
+struct Shading : QObject
 {
     Shading(const QGLContext **pcontext = NULL);
     ~Shading();

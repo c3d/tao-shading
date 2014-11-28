@@ -31,7 +31,6 @@ QGLShaderProgram*     GoochShading::pgm = NULL;
 std::map<text, GLint> GoochShading::uniforms;
 const QGLContext*     GoochShading::context = NULL;
 
-#define GL (*graphic_state)
 
 GoochShading::GoochShading()
 // ----------------------------------------------------------------------------
@@ -341,12 +340,12 @@ void GoochShading::createShaders()
 
             // Save uniform locations
             uint id = pgm->programId();
-            uniforms["warm_color"] = glGetUniformLocation(id, "warm_color");
-            uniforms["cool_color"] = glGetUniformLocation(id, "cool_color");
-            uniforms["surface_color"] = glGetUniformLocation(id, "surface_color");
-            uniforms["warm_diffuse"] = glGetUniformLocation(id, "warm_diffuse");
-            uniforms["cool_diffuse"] = glGetUniformLocation(id, "cool_diffuse");
-            uniforms["lights"] = glGetUniformLocation(id, "lights");
+            uniforms["warm_color"] = GL.GetUniformLocation(id, "warm_color");
+            uniforms["cool_color"] = GL.GetUniformLocation(id, "cool_color");
+            uniforms["surface_color"]=GL.GetUniformLocation(id,"surface_color");
+            uniforms["warm_diffuse"] = GL.GetUniformLocation(id,"warm_diffuse");
+            uniforms["cool_diffuse"] = GL.GetUniformLocation(id,"cool_diffuse");
+            uniforms["lights"] = GL.GetUniformLocation(id, "lights");
         }
     }
 }

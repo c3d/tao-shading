@@ -31,7 +31,6 @@ QGLShaderProgram*     CelShading::pgm = NULL;
 std::map<text, GLint> CelShading::uniforms;
 const QGLContext*     CelShading::context = NULL;
 
-#define GL (*graphic_state)
 
 CelShading::CelShading()
 // ----------------------------------------------------------------------------
@@ -298,8 +297,8 @@ void CelShading::createShaders()
 
             // Save uniform locations
             uint id = pgm->programId();
-            uniforms["cel_color"] = glGetUniformLocation(id, "cel_color");
-            uniforms["lights"] = glGetUniformLocation(id, "lights");
+            uniforms["cel_color"] = GL.GetUniformLocation(id, "cel_color");
+            uniforms["lights"] = GL.GetUniformLocation(id, "lights");
         }
     }
 }
