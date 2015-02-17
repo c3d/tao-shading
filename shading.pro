@@ -26,11 +26,6 @@ SOURCES = shading.cpp \
     cel_shading.cpp \
     gooch_shading.cpp
 
-win32 {
-  DEFINES     += GLEW_STATIC
-  SOURCES     += $${TAOTOPSRC}/tao/include/tao/GL/glew.c
-}
-
 
 TBL_SOURCES  = shading.tbl
 
